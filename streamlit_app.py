@@ -33,6 +33,8 @@ if 'page' not in st.session_state:
     st.session_state.page = 'intro'
 if 'scores' not in st.session_state:
     st.session_state.scores = {}
+if 'show_results_flag' not in st.session_state:
+    st.session_state.show_results_flag = False
 
 # 診断データ構造
 diagnostic_data = {
@@ -162,6 +164,7 @@ def show_intro():
     
     if st.button("📝 診断を開始する", type="primary", use_container_width=True):
         st.session_state.page = 'questions'
+        st.session_state.show_results_flag = False
         st.rerun()
 
 def show_questions():
@@ -215,6 +218,7 @@ def show_questions():
     st.success("✅ 全ての設問に回答しました！")
     if st.button("📊 診断結果を見る", type="primary", use_container_width=True):
         st.session_state.page = 'results'
+        st.session_state.show_results_flag = True
         st.rerun()
 
 def calculate_scores():
@@ -252,6 +256,26 @@ def get_rank(percentage):
 
 def show_results():
     """結果ページ"""
+    # ページトップへスクロールするJavaScript（複数の方法を試行）
+    if st.session_state.show_results_flag:
+        st.markdown("""
+        <script>
+            // 方法1: メインコンテナを上部へスクロール
+            const mainContainer = window.parent.document.querySelector('section.main');
+            if (mainContainer) {
+                mainContainer.scrollTop = 0;
+            }
+            
+            // 方法2: ウィンドウ全体をスクロール
+            window.parent.scrollTo(0, 0);
+            
+            // 方法3: body要素をスクロール
+            window.parent.document.body.scrollTop = 0;
+            window.parent.document.documentElement.scrollTop = 0;
+        </script>
+        """, unsafe_allow_html=True)
+        st.session_state.show_results_flag = False
+    
     st.write("## 📊 診断結果")
     
     axis_scores, axis_max_scores, total_score, max_total_score, percentage = calculate_scores()
@@ -503,6 +527,7 @@ def show_results():
     if st.button("🔄 診断をやり直す", use_container_width=True):
         st.session_state.scores = {}
         st.session_state.page = 'intro'
+        st.session_state.show_results_flag = False
         st.rerun()
 
 # ページルーティング
