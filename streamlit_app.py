@@ -44,13 +44,7 @@ diagnostic_data = {
             "日々の経営判断をする際に、明確な判断基準や優先順位がありますか？",
             "幹部社員や管理職は、あなたの経営方針をしっかり理解していますか？",
             "重要な経営判断について、他の人に筋道立てて説明することができますか？"
-        ],
-        "options": {
-            4: "非常に当てはまる",
-            3: "やや当てはまる",
-            2: "あまり当てはまらない",
-            1: "全く当てはまらない"
-        }
+        ]
     },
     "事業計画の実行管理": {
         "questions": [
@@ -61,13 +55,7 @@ diagnostic_data = {
             "計画が未達成の場合、修正や改善のアクションをすぐに実行していますか？",
             "全社員が、今年度の会社の目標数値（売上・利益など）を知っていますか？",
             "3ヶ月ごとに、目標達成のための具体的な行動計画がありますか？"
-        ],
-        "options": {
-            4: "非常に当てはまる",
-            3: "やや当てはまる",
-            2: "あまり当てはまらない",
-            1: "全く当てはまらない"
-        }
+        ]
     },
     "組織体制の強さ": {
         "questions": [
@@ -77,13 +65,7 @@ diagnostic_data = {
             "社員が、上司の指示を待たずに自分で判断して行動できていますか？",
             "業務のやり方が標準化され、マニュアルや手順書が整備されていますか？",
             "定例会議で、報告だけでなく、実質的な意思決定ができていますか？"
-        ],
-        "options": {
-            4: "非常に当てはまる",
-            3: "やや当てはまる",
-            2: "あまり当てはまらない",
-            1: "全く当てはまらない"
-        }
+        ]
     },
     "経営者の時間の使い方": {
         "questions": [
@@ -93,13 +75,7 @@ diagnostic_data = {
             "突発的なトラブル対応や問題解決に、時間を取られることは少ないですか？",
             "「やりたいけど時間がなくてできていないこと」は少ないですか？",
             "経営者がやるべき仕事と、他の人に任せるべき仕事を、明確に区別できていますか？"
-        ],
-        "options": {
-            4: "非常に当てはまる",
-            3: "やや当てはまる",
-            2: "あまり当てはまらない",
-            1: "全く当てはまらない"
-        }
+        ]
     },
     "数値管理の仕組み": {
         "questions": [
@@ -109,13 +85,7 @@ diagnostic_data = {
             "目標未達成の時、必ず原因を分析して改善策を立てていますか？",
             "各社員が、自分の目標達成状況を常に把握できていますか？",
             "成果（業績）と報酬（給与・賞与）が、明確に連動する仕組みがありますか？"
-        ],
-        "options": {
-            4: "非常に当てはまる",
-            3: "やや当てはまる",
-            2: "あまり当てはまらない",
-            1: "全く当てはまらない"
-        }
+        ]
     },
     "収益性の健全度": {
         "questions": [
@@ -125,14 +95,16 @@ diagnostic_data = {
             "キャッシュフロー（現金の流れ）を毎月チェックし、資金繰りに問題はありませんか？",
             "不採算事業や赤字商品を定期的に見直し、改善または撤退の判断をしていますか？",
             "固定費（人件費・家賃など）は適正で、売上の変動に対応できる体質ですか？"
-        ],
-        "options": {
-            4: "非常に当てはまる",
-            3: "やや当てはまる",
-            2: "あまり当てはまらない",
-            1: "全く当てはまらない"
-        }
+        ]
     }
+}
+
+# 選択肢（全軸共通）
+options = {
+    4: "非常に当てはまる",
+    3: "やや当てはまる",
+    2: "あまり当てはまらない",
+    1: "全く当てはまらない"
 }
 
 def show_intro():
@@ -199,7 +171,7 @@ def show_questions():
     # プログレスバー
     total_questions = sum(len(data["questions"]) for data in diagnostic_data.values())
     answered = len(st.session_state.scores)
-    progress = answered / total_questions
+    progress = answered / total_questions if total_questions > 0 else 0
     st.progress(progress)
     st.write(f"**進捗: {answered}/{total_questions} 問回答済み** ({int(progress*100)}%)")
     
@@ -214,18 +186,21 @@ def show_questions():
             
             st.write(f"**問{q_idx}. {question}**")
             
-            # デフォルト値の設定を改善
-            default_index = None
+            # ラジオボタンのデフォルト値を設定
             if key in st.session_state.scores:
-                default_index = [4, 3, 2, 1].index(st.session_state.scores[key])
+                # 既に回答がある場合
+                default_value = st.session_state.scores[key]
+            else:
+                # 初回はNoneではなく、最初の選択肢をデフォルトに
+                default_value = 4
             
             score = st.radio(
                 f"回答を選択してください",
                 options=[4, 3, 2, 1],
-                format_func=lambda x: axis_data['options'][x],
+                format_func=lambda x: options[x],
                 horizontal=True,
-                key=f"radio_{key}",  # キーを変更して一意性を確保
-                index=default_index,
+                key=f"q_{axis_idx}_{q_idx}",  # シンプルなキー
+                index=[4, 3, 2, 1].index(default_value),
                 label_visibility="collapsed"
             )
             
@@ -236,22 +211,11 @@ def show_questions():
         
         st.write("---")
     
-    # 全ての回答を再チェック
-    all_answered = all(
-        f"{axis_name}_{q_idx}" in st.session_state.scores
-        for axis_name, axis_data in diagnostic_data.items()
-        for q_idx in range(1, len(axis_data['questions']) + 1)
-    )
-    
     # 診断結果を見るボタン
-    if all_answered:
-        st.success("✅ 全ての設問に回答しました！")
-        if st.button("📊 診断結果を見る", type="primary", use_container_width=True):
-            st.session_state.page = 'results'
-            st.rerun()
-    else:
-        remaining = total_questions - answered
-        st.warning(f"⚠️ あと{remaining}問回答してください")
+    st.success("✅ 全ての設問に回答しました！")
+    if st.button("📊 診断結果を見る", type="primary", use_container_width=True):
+        st.session_state.page = 'results'
+        st.rerun()
 
 def calculate_scores():
     """スコア計算"""
@@ -271,7 +235,7 @@ def calculate_scores():
     
     total_score = sum(axis_scores.values())
     max_total_score = sum(axis_max_scores.values())
-    percentage = (total_score / max_total_score) * 100
+    percentage = (total_score / max_total_score) * 100 if max_total_score > 0 else 0
     
     return axis_scores, axis_max_scores, total_score, max_total_score, percentage
 
@@ -288,9 +252,6 @@ def get_rank(percentage):
 
 def show_results():
     """結果ページ"""
-    # ページトップにスクロール
-    st.markdown('<div id="top"></div>', unsafe_allow_html=True)
-    
     st.write("## 📊 診断結果")
     
     axis_scores, axis_max_scores, total_score, max_total_score, percentage = calculate_scores()
@@ -331,7 +292,7 @@ def show_results():
     col1, col2 = st.columns([2, 3])
     
     with col1:
-        # レーダーチャート（サイズを小さく）
+        # レーダーチャート
         labels = list(axis_scores.keys())
         scores = [axis_scores[label] / axis_max_scores[label] * 4 for label in labels]
         
@@ -339,11 +300,11 @@ def show_results():
         scores_plot = scores + scores[:1]
         angles_plot = angles + angles[:1]
         
-        # 日本語フォント設定（文字化け対策）
+        # 日本語フォント設定
         plt.rcParams['font.sans-serif'] = ['MS Gothic', 'Yu Gothic', 'Hiragino Sans', 'Meiryo', 'DejaVu Sans', 'sans-serif']
         plt.rcParams['axes.unicode_minus'] = False
         
-        # チャートサイズを縮小（8→5に変更）
+        # チャートサイズを縮小
         fig, ax = plt.subplots(figsize=(5, 5), subplot_kw=dict(polar=True))
         ax.plot(angles_plot, scores_plot, 'o-', linewidth=2.5, color='#1f77b4', markersize=8)
         ax.fill(angles_plot, scores_plot, alpha=0.25, color='#1f77b4')
@@ -371,7 +332,7 @@ def show_results():
         st.write("#### 📊 各軸スコア")
         for idx, (axis_name, score) in enumerate(axis_scores.items(), 1):
             max_score = axis_max_scores[axis_name]
-            pct = (score / max_score) * 100
+            pct = (score / max_score) * 100 if max_score > 0 else 0
             
             if pct >= 75:
                 color = "🟢"
@@ -390,13 +351,13 @@ def show_results():
     # 優先改善課題
     st.write("### 🎯 優先改善課題 TOP3")
     
-    sorted_axes = sorted(axis_scores.items(), key=lambda x: x[1] / axis_max_scores[x[0]])
+    sorted_axes = sorted(axis_scores.items(), key=lambda x: x[1] / axis_max_scores[x[0]] if axis_max_scores[x[0]] > 0 else 0)
     
     medals = ["🥇", "🥈", "🥉"]
     priorities = ["最優先課題", "第2優先", "第3優先"]
     
     for idx, (axis_name, score) in enumerate(sorted_axes[:3]):
-        pct = (score / axis_max_scores[axis_name]) * 100
+        pct = (score / axis_max_scores[axis_name]) * 100 if axis_max_scores[axis_name] > 0 else 0
         
         with st.expander(f"{medals[idx]} {priorities[idx]}: {axis_name} ({pct:.1f}%)", expanded=(idx==0)):
             st.write(f"**現状スコア**: {score} / {axis_max_scores[axis_name]} 点")
