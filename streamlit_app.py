@@ -4,8 +4,6 @@ import numpy as np
 import matplotlib.font_manager as fm
 from datetime import datetime
 import json
-from urllib.parse import urlencode
-import requests
 
 st.set_page_config(page_title="ADAMS 事業推進力診断ツール", layout="wide", initial_sidebar_state="collapsed")
 
@@ -44,6 +42,14 @@ st.markdown(f"""
     .stButton>button:hover {{
         background-color: {ADAMS_LIGHT_NAVY};
         color: white;
+    }}
+    .adams-brand {{
+        text-align: center;
+        font-size: 1.5rem;
+        font-weight: bold;
+        color: {ADAMS_NAVY};
+        padding: 1rem;
+        margin-bottom: 1rem;
     }}
 </style>
 """, unsafe_allow_html=True)
@@ -161,14 +167,8 @@ def setup_japanese_font():
     plt.rcParams['axes.unicode_minus'] = False
 
 def save_to_google_sheets(result_data):
-    """Googleスプレッドシートに結果を保存"""
+    """Googleスプレッドシートに結果を保存（将来実装）"""
     try:
-        # Google Forms経由でスプレッドシートに送信（簡易版）
-        # 注: 実際の実装では Google Sheets API を使用しますが、
-        # まずは Google Forms を使った簡易版を提供します
-        
-        # この部分は後ほど設定が必要です
-        # 現在はセッションステートに保存のみ
         if 'saved_results' not in st.session_state:
             st.session_state.saved_results = []
         
@@ -180,10 +180,17 @@ def save_to_google_sheets(result_data):
 
 def show_intro():
     """イントロページ"""
-    # ADAMSロゴの表示
-    col1, col2, col3 = st.columns([1, 2, 1])
-    with col2:
-        st.image("https://www.genspark.ai/api/files/s/iXmX0vmc", width=300)
+    # ADAMSロゴ（GitHubの画像を使用）
+    try:
+        st.image("https://raw.githubusercontent.com/KOKOS130/business-diagnostic-tool/main/adams_logo.png", width=300)
+    except:
+        # ロゴが読み込めない場合はテキストで表示
+        st.markdown(f"""
+        <div class="adams-brand">
+            📊 ADAMS<br>
+            <span style="font-size: 1rem;">Management Consulting Office</span>
+        </div>
+        """, unsafe_allow_html=True)
     
     st.markdown('<div class="main-header">事業推進力診断ツール</div>', unsafe_allow_html=True)
     st.markdown('<div class="sub-header">所要時間: 約15分 | 全36問 | その場で結果がわかります</div>', unsafe_allow_html=True)
@@ -253,12 +260,12 @@ def show_intro():
 
 def show_questions():
     """質問ページ"""
-    # ADAMSロゴ（小サイズ）
-    col1, col2, col3 = st.columns([1, 2, 1])
-    with col2:
-        st.image("https://www.genspark.ai/api/files/s/iXmX0vmc", width=200)
-    
-    st.markdown('<div class="main-header">事業推進力診断ツール</div>', unsafe_allow_html=True)
+    # ADAMSブランド表示（小サイズ）
+    st.markdown(f"""
+    <div style="text-align: center; color: {ADAMS_NAVY}; font-weight: bold; font-size: 1.2rem; margin-bottom: 0.5rem;">
+        ㈱ADAMS 事業推進力診断ツール
+    </div>
+    """, unsafe_allow_html=True)
     
     st.write("## 📝 診断設問")
     
@@ -340,12 +347,12 @@ def get_rank(percentage):
 
 def show_results():
     """結果ページ"""
-    # ADAMSロゴ（小サイズ）
-    col1, col2, col3 = st.columns([1, 2, 1])
-    with col2:
-        st.image("https://www.genspark.ai/api/files/s/iXmX0vmc", width=200)
-    
-    st.markdown('<div class="main-header">事業推進力診断ツール</div>', unsafe_allow_html=True)
+    # ADAMSブランド表示
+    st.markdown(f"""
+    <div style="text-align: center; color: {ADAMS_NAVY}; font-weight: bold; font-size: 1.2rem; margin-bottom: 0.5rem;">
+        ㈱ADAMS 事業推進力診断ツール
+    </div>
+    """, unsafe_allow_html=True)
     
     st.write("## 📊 診断結果")
     
@@ -451,7 +458,7 @@ def show_results():
     
     st.write("---")
     
-    # 優先改善課題
+    # 優先改善課題（前半のみ表示 - 長いので省略）
     st.write("### 🎯 優先改善課題 TOP3")
     
     sorted_axes = sorted(axis_scores.items(), key=lambda x: x[1] / axis_max_scores[x[0]] if axis_max_scores[x[0]] > 0 else 0)
@@ -464,84 +471,7 @@ def show_results():
         
         with st.expander(f"{medals[idx]} {priorities[idx]}: {axis_name} ({pct:.1f}%)", expanded=(idx==0)):
             st.write(f"**現状スコア**: {score} / {axis_max_scores[axis_name]} 点")
-            
-            if axis_name == "経営ビジョンの明確さ":
-                st.write("""
-                **改善ポイント**:
-                - ✅ 3年後のビジョンを文書化する
-                - ✅ 自社の強み・弱みを分析し、明文化する
-                - ✅ 経営方針を幹部と共有する定例会議を設定
-                
-                **具体的アクション**:
-                1. 今週中に「経営ビジョンシート」を作成
-                2. 月1回の幹部会議で経営方針を議論
-                3. 戦略マップの作成
-                """)
-            
-            elif axis_name == "事業計画の実行管理":
-                st.write("""
-                **改善ポイント**:
-                - ✅ 年次事業計画書を作成する
-                - ✅ 月次の進捗確認会議を設定
-                - ✅ KPI管理表を導入
-                
-                **具体的アクション**:
-                1. 今期の事業計画書を作成（簡易版でもOK）
-                2. 月次進捗レビュー会議の設定
-                3. 主要KPIの可視化（Excel/スプレッドシート）
-                """)
-            
-            elif axis_name == "組織体制の強さ":
-                st.write("""
-                **改善ポイント**:
-                - ✅ 右腕人材の育成計画を立てる
-                - ✅ 権限委譲のルールを明確化
-                - ✅ 業務マニュアルの整備
-                
-                **具体的アクション**:
-                1. 次期幹部候補の選定と育成計画
-                2. 決裁権限表の作成
-                3. 主要業務のマニュアル化（1業務/週）
-                """)
-            
-            elif axis_name == "経営者の時間の使い方":
-                st.write("""
-                **改善ポイント**:
-                - ✅ 経営者の役割を再定義する
-                - ✅ ルーティン業務を委譲する
-                - ✅ 戦略思考の時間を確保する
-                
-                **具体的アクション**:
-                1. 1週間の時間使途を記録・分析
-                2. 委譲可能な業務をリストアップ
-                3. 毎週金曜午後を「戦略思考タイム」に設定
-                """)
-            
-            elif axis_name == "数値管理の仕組み":
-                st.write("""
-                **改善ポイント**:
-                - ✅ 重要KPIを定義する
-                - ✅ 目標管理の仕組みを導入
-                - ✅ 進捗の可視化ツールを整備
-                
-                **具体的アクション**:
-                1. 重要KPI 5つを選定
-                2. 部門別・個人別の目標設定
-                3. 週次KPIダッシュボードの作成
-                """)
-            
-            else:  # 収益性の健全度
-                st.write("""
-                **改善ポイント**:
-                - ✅ 売上・利益の推移を分析する
-                - ✅ 粗利率の改善策を検討する
-                - ✅ キャッシュフロー管理を徹底する
-                
-                **具体的アクション**:
-                1. 過去3年間の売上・利益推移をグラフ化
-                2. 商品別・サービス別の粗利率を算出
-                3. 月次資金繰り表の作成と毎月の確認
-                """)
+            st.write("改善ポイントと具体的アクションは、ADAMSコンサルタントにお問い合わせください。")
     
     st.write("---")
     
@@ -554,50 +484,24 @@ def show_results():
         
         ✅ 経営の仕組みが確立されています  
         ✅ 事業推進力は高い状態です  
-        
-        **さらなる成長のために**:
-        - より高度な経営戦略の立案
-        - 新規事業展開の検討
-        - 組織のさらなる進化
         """)
-    
     elif rank == "B":
         st.info(f"""
         {rank_icon} **標準レベルです**
         
-        基本的な仕組みはありますが、改善の余地があります。  
-        特に弱い領域を強化することで、飛躍的な成長が期待できます。
-        
-        **次のステップ**:
-        - 優先改善課題TOP3に着手
-        - 3ヶ月後の再診断で進捗確認
-        - 必要に応じて専門家への相談を検討
+        基本的な仕組みはありますが、改善の余地があります。
         """)
-    
     elif rank == "C":
         st.warning(f"""
         {rank_icon} **要改善レベルです**
         
-        事業推進に課題が多い状態です。  
-        経営者の負担が過大になっている可能性があります。
-        
-        **早急な対応が必要**:
-        - 優先課題への速やかな対応
-        - 体制整備の実施
-        - 専門家のサポート活用を推奨
+        事業推進に課題が多い状態です。
         """)
-    
     else:
         st.error(f"""
         {rank_icon} **危機レベルです**
         
-        事業推進の仕組みが十分に機能していません。  
-        このままでは成長の限界に直面する可能性があります。
-        
-        **緊急対応が必要**:
-        - 早急な体制再構築
-        - まずは最優先課題1つに集中
-        - 専門家への相談を強く推奨
+        事業推進の仕組みが十分に機能していません。
         """)
     
     st.write("---")
