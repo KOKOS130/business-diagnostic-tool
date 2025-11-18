@@ -180,17 +180,18 @@ def save_to_google_sheets(result_data):
 
 def show_intro():
     """イントロページ"""
-    # ADAMSロゴ（GitHubの画像を使用）
-    try:
-        st.image("https://raw.githubusercontent.com/KOKOS130/business-diagnostic-tool/main/adams_logo.png", width=300)
-    except:
-        # ロゴが読み込めない場合はテキストで表示
-        st.markdown(f"""
-        <div class="adams-brand">
-            📊 ADAMS<br>
-            <span style="font-size: 1rem;">Management Consulting Office</span>
-        </div>
-        """, unsafe_allow_html=True)
+    # ADAMSロゴ（控えめなサイズ）
+    col1, col2, col3 = st.columns([1, 2, 1])
+    with col2:
+        try:
+            st.image("https://raw.githubusercontent.com/KOKOS130/business-diagnostic-tool/main/adams_logo.png", width=150)
+        except:
+            # ロゴが読み込めない場合はテキストで表示
+            st.markdown(f"""
+            <div style="text-align: center; color: {ADAMS_NAVY}; font-weight: bold; font-size: 1rem; margin-bottom: 0.5rem;">
+                ㈱ADAMS Management Consulting Office
+            </div>
+            """, unsafe_allow_html=True)
     
     st.markdown('<div class="main-header">事業推進力診断ツール</div>', unsafe_allow_html=True)
     st.markdown('<div class="sub-header">所要時間: 約15分 | 全36問 | その場で結果がわかります</div>', unsafe_allow_html=True)
@@ -458,7 +459,7 @@ def show_results():
     
     st.write("---")
     
-    # 優先改善課題（前半のみ表示 - 長いので省略）
+    # 優先改善課題
     st.write("### 🎯 優先改善課題 TOP3")
     
     sorted_axes = sorted(axis_scores.items(), key=lambda x: x[1] / axis_max_scores[x[0]] if axis_max_scores[x[0]] > 0 else 0)
@@ -471,7 +472,7 @@ def show_results():
         
         with st.expander(f"{medals[idx]} {priorities[idx]}: {axis_name} ({pct:.1f}%)", expanded=(idx==0)):
             st.write(f"**現状スコア**: {score} / {axis_max_scores[axis_name]} 点")
-            st.write("改善ポイントと具体的アクションは、ADAMSコンサルタントにお問い合わせください。")
+            st.write("詳しい改善ポイントと具体的アクションプランについては、ADAMSコンサルタントにお問い合わせください。")
     
     st.write("---")
     
