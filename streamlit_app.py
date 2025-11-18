@@ -25,16 +25,11 @@ st.markdown("""
 </style>
 """, unsafe_allow_html=True)
 
-st.markdown('<div class="main-header">📊 事業推進力診断ツール</div>', unsafe_allow_html=True)
-st.markdown('<div class="sub-header">所要時間: 約15分 | 全36問 | その場で結果がわかります</div>', unsafe_allow_html=True)
-
 # セッション状態の初期化
 if 'page' not in st.session_state:
     st.session_state.page = 'intro'
 if 'scores' not in st.session_state:
     st.session_state.scores = {}
-if 'show_results_flag' not in st.session_state:
-    st.session_state.show_results_flag = False
 
 # 診断データ構造
 diagnostic_data = {
@@ -109,8 +104,50 @@ options = {
     1: "全く当てはまらない"
 }
 
+def configure_japanese_font():
+    """日本語フォントの設定（より確実な方法）"""
+    import platform
+    import os
+    
+    # システムに応じたフォント候補
+    font_candidates = []
+    
+    system = platform.system()
+    if system == 'Windows':
+        font_candidates = ['MS Gothic', 'Yu Gothic', 'Meiryo', 'MS PGothic']
+    elif system == 'Darwin':  # macOS
+        font_candidates = ['Hiragino Sans', 'Hiragino Kaku Gothic Pro', 'AppleGothic']
+    else:  # Linux
+        font_candidates = ['Noto Sans CJK JP', 'TakaoGothic', 'IPAGothic', 'VL Gothic']
+    
+    # 利用可能なフォントを探す
+    available_fonts = [f.name for f in fm.fontManager.ttflist]
+    
+    selected_font = None
+    for candidate in font_candidates:
+        if candidate in available_fonts:
+            selected_font = candidate
+            break
+    
+    # フォント設定
+    if selected_font:
+        plt.rcParams['font.sans-serif'] = [selected_font]
+    else:
+        # フォールバック: システムの全日本語フォントを試す
+        japanese_fonts = [f.name for f in fm.fontManager.ttflist if 'Gothic' in f.name or 'Mincho' in f.name or 'CJK' in f.name]
+        if japanese_fonts:
+            plt.rcParams['font.sans-serif'] = [japanese_fonts[0]]
+        else:
+            # 最終フォールバック
+            plt.rcParams['font.sans-serif'] = ['DejaVu Sans']
+    
+    plt.rcParams['axes.unicode_minus'] = False
+
 def show_intro():
     """イントロページ"""
+    st.markdown('<div class="main-header">📊 事業推進力診断ツール</div>', unsafe_allow_html=True)
+    st.markdown('<div class="sub-header">所要時間: 約15分 | 全36問 | その場で結果がわかります</div>', unsafe_allow_html=True)
+    
     st.write("## 🎯 この診断について")
     
     col1, col2 = st.columns(2)
@@ -164,11 +201,13 @@ def show_intro():
     
     if st.button("📝 診断を開始する", type="primary", use_container_width=True):
         st.session_state.page = 'questions'
-        st.session_state.show_results_flag = False
         st.rerun()
 
 def show_questions():
     """質問ページ"""
+    st.markdown('<div class="main-header">📊 事業推進力診断ツール</div>', unsafe_allow_html=True)
+    st.markdown('<div class="sub-header">所要時間: 約15分 | 全36問 | その場で結果がわかります</div>', unsafe_allow_html=True)
+    
     st.write("## 📝 診断設問")
     
     # プログレスバー
@@ -202,7 +241,7 @@ def show_questions():
                 options=[4, 3, 2, 1],
                 format_func=lambda x: options[x],
                 horizontal=True,
-                key=f"q_{axis_idx}_{q_idx}",  # シンプルなキー
+                key=f"q_{axis_idx}_{q_idx}",
                 index=[4, 3, 2, 1].index(default_value),
                 label_visibility="collapsed"
             )
@@ -218,7 +257,6 @@ def show_questions():
     st.success("✅ 全ての設問に回答しました！")
     if st.button("📊 診断結果を見る", type="primary", use_container_width=True):
         st.session_state.page = 'results'
-        st.session_state.show_results_flag = True
         st.rerun()
 
 def calculate_scores():
@@ -255,26 +293,10 @@ def get_rank(percentage):
         return "D", "危機レベル", "🚨", "#dc3545"
 
 def show_results():
-    """結果ページ"""
-    # ページトップへスクロールするJavaScript（複数の方法を試行）
-    if st.session_state.show_results_flag:
-        st.markdown("""
-        <script>
-            // 方法1: メインコンテナを上部へスクロール
-            const mainContainer = window.parent.document.querySelector('section.main');
-            if (mainContainer) {
-                mainContainer.scrollTop = 0;
-            }
-            
-            // 方法2: ウィンドウ全体をスクロール
-            window.parent.scrollTo(0, 0);
-            
-            // 方法3: body要素をスクロール
-            window.parent.document.body.scrollTop = 0;
-            window.parent.document.documentElement.scrollTop = 0;
-        </script>
-        """, unsafe_allow_html=True)
-        st.session_state.show_results_flag = False
+    """結果ページ - ページトップから表示"""
+    # ヘッダーを最上部に配置（これが最初に表示される）
+    st.markdown('<div class="main-header">📊 事業推進力診断ツール</div>', unsafe_allow_html=True)
+    st.markdown('<div class="sub-header">所要時間: 約15分 | 全36問 | その場で結果がわかります</div>', unsafe_allow_html=True)
     
     st.write("## 📊 診断結果")
     
@@ -316,6 +338,9 @@ def show_results():
     col1, col2 = st.columns([2, 3])
     
     with col1:
+        # 日本語フォント設定
+        configure_japanese_font()
+        
         # レーダーチャート
         labels = list(axis_scores.keys())
         scores = [axis_scores[label] / axis_max_scores[label] * 4 for label in labels]
@@ -323,10 +348,6 @@ def show_results():
         angles = np.linspace(0, 2 * np.pi, len(labels), endpoint=False).tolist()
         scores_plot = scores + scores[:1]
         angles_plot = angles + angles[:1]
-        
-        # 日本語フォント設定
-        plt.rcParams['font.sans-serif'] = ['MS Gothic', 'Yu Gothic', 'Hiragino Sans', 'Meiryo', 'DejaVu Sans', 'sans-serif']
-        plt.rcParams['axes.unicode_minus'] = False
         
         # チャートサイズを縮小
         fig, ax = plt.subplots(figsize=(5, 5), subplot_kw=dict(polar=True))
@@ -343,7 +364,7 @@ def show_results():
             "収益性の\n健全度"
         ]
         
-        ax.set_thetagrids(np.degrees(angles), short_labels, fontsize=8)
+        ax.set_thetagrids(np.degrees(angles), short_labels, fontsize=9)
         ax.set_ylim(0, 4)
         ax.set_yticks([1, 2, 3, 4])
         ax.set_yticklabels(['1', '2', '3', '4'], fontsize=8)
@@ -527,8 +548,11 @@ def show_results():
     if st.button("🔄 診断をやり直す", use_container_width=True):
         st.session_state.scores = {}
         st.session_state.page = 'intro'
-        st.session_state.show_results_flag = False
         st.rerun()
+    
+    # フッター
+    st.write("---")
+    st.caption(f"診断日時: {datetime.now().strftime('%Y年%m月%d日 %H:%M')}")
 
 # ページルーティング
 if st.session_state.page == 'intro':
@@ -537,7 +561,3 @@ elif st.session_state.page == 'questions':
     show_questions()
 elif st.session_state.page == 'results':
     show_results()
-
-# フッター
-st.write("---")
-st.caption(f"診断日時: {datetime.now().strftime('%Y年%m月%d日 %H:%M')}")
