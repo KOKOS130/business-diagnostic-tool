@@ -48,8 +48,24 @@ st.markdown(f"""
     .stButton>button {{
         background-color: {ADAMS_NAVY};
         color: white;
+        height: 3rem;
+        display: flex;
+        align-items: center;
+        justify-content: center;
     }}
     .stButton>button:hover {{
+        background-color: {ADAMS_LIGHT_NAVY};
+        color: white;
+    }}
+    .stDownloadButton>button {{
+        background-color: {ADAMS_NAVY};
+        color: white;
+        height: 3rem;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }}
+    .stDownloadButton>button:hover {{
         background-color: {ADAMS_LIGHT_NAVY};
         color: white;
     }}
@@ -534,43 +550,6 @@ def show_results():
     # 結果を保存
     save_to_google_sheets(result_data)
     
-    # 印刷・PDF出力ボタン（no-printクラスで印刷時非表示）
-    st.markdown('<div class="no-print">', unsafe_allow_html=True)
-    col_btn1, col_btn2 = st.columns(2)
-    
-    with col_btn1:
-        # ブラウザ印刷ボタン
-        st.markdown("""
-        <script>
-        function printPage() {
-            window.print();
-        }
-        </script>
-        """, unsafe_allow_html=True)
-        
-        if st.button("🖨️ 印刷する", use_container_width=True, key="print_btn"):
-            st.markdown("""
-            <script>
-            window.print();
-            </script>
-            """, unsafe_allow_html=True)
-    
-    with col_btn2:
-        # PDFダウンロードボタン
-        pdf_buffer = generate_pdf_report(axis_scores, axis_max_scores, total_score, 
-                                         max_total_score, percentage, rank, rank_label)
-        
-        st.download_button(
-            label="📄 PDFダウンロード",
-            data=pdf_buffer,
-            file_name=f"診断結果_{datetime.now().strftime('%Y%m%d_%H%M')}.pdf",
-            mime="application/pdf",
-            use_container_width=True
-        )
-    
-    st.markdown('</div>', unsafe_allow_html=True)
-    st.write("---")
-    
     # 総合スコア表示
     st.write("### 🎯 総合評価")
     
@@ -711,8 +690,47 @@ def show_results():
     
     st.info("✅ 診断結果は自動的に記録されました")
     
-    # アクションボタン（no-printクラス）
+    st.write("")
+    
+    # 印刷・PDF出力ボタン（no-printクラスで印刷時非表示）
     st.markdown('<div class="no-print">', unsafe_allow_html=True)
+    
+    # PDFダウンロードボタン用のデータ準備
+    pdf_buffer = generate_pdf_report(axis_scores, axis_max_scores, total_score, 
+                                     max_total_score, percentage, rank, rank_label)
+    
+    col_btn1, col_btn2 = st.columns(2)
+    
+    with col_btn1:
+        # ブラウザ印刷ボタン
+        st.markdown("""
+        <script>
+        function printPage() {
+            window.print();
+        }
+        </script>
+        """, unsafe_allow_html=True)
+        
+        if st.button("🖨️ 印刷する", use_container_width=True, key="print_btn"):
+            st.markdown("""
+            <script>
+            window.print();
+            </script>
+            """, unsafe_allow_html=True)
+    
+    with col_btn2:
+        # PDFダウンロードボタン
+        st.download_button(
+            label="📄 PDFダウンロード",
+            data=pdf_buffer,
+            file_name=f"診断結果_{datetime.now().strftime('%Y%m%d_%H%M')}.pdf",
+            mime="application/pdf",
+            use_container_width=True
+        )
+    
+    st.write("")
+    
+    # 診断をやり直すボタン
     if st.button("🔄 診断をやり直す", use_container_width=True):
         st.session_state.scores = {}
         st.session_state.page = 'intro'
@@ -739,3 +757,4 @@ elif st.session_state.page == 'questions':
     show_questions()
 elif st.session_state.page == 'results':
     show_results()
+                                                                                                                  
