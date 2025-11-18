@@ -214,25 +214,37 @@ def show_questions():
             
             st.write(f"**問{q_idx}. {question}**")
             
+            # デフォルト値の設定を改善
+            default_index = None
+            if key in st.session_state.scores:
+                default_index = [4, 3, 2, 1].index(st.session_state.scores[key])
+            
             score = st.radio(
                 f"回答を選択してください",
                 options=[4, 3, 2, 1],
                 format_func=lambda x: axis_data['options'][x],
                 horizontal=True,
-                key=key,
-                index=None if key not in st.session_state.scores else [4,3,2,1].index(st.session_state.scores[key]),
+                key=f"radio_{key}",  # キーを変更して一意性を確保
+                index=default_index,
                 label_visibility="collapsed"
             )
             
-            if score is not None:
-                st.session_state.scores[key] = score
+            # スコアを保存
+            st.session_state.scores[key] = score
             
             st.write("")
         
         st.write("---")
     
+    # 全ての回答を再チェック
+    all_answered = all(
+        f"{axis_name}_{q_idx}" in st.session_state.scores
+        for axis_name, axis_data in diagnostic_data.items()
+        for q_idx in range(1, len(axis_data['questions']) + 1)
+    )
+    
     # 診断結果を見るボタン
-    if answered == total_questions:
+    if all_answered:
         st.success("✅ 全ての設問に回答しました！")
         if st.button("📊 診断結果を見る", type="primary", use_container_width=True):
             st.session_state.page = 'results'
@@ -276,12 +288,8 @@ def get_rank(percentage):
 
 def show_results():
     """結果ページ"""
-    # ページトップにスクロール（JavaScript使用）
-    st.markdown("""
-    <script>
-        window.parent.document.querySelector('section.main').scrollTo(0, 0);
-    </script>
-    """, unsafe_allow_html=True)
+    # ページトップにスクロール
+    st.markdown('<div id="top"></div>', unsafe_allow_html=True)
     
     st.write("## 📊 診断結果")
     
@@ -320,10 +328,10 @@ def show_results():
     # レーダーチャートと詳細スコア
     st.write("### 📈 6軸バランス分析")
     
-    col1, col2 = st.columns([3, 2])
+    col1, col2 = st.columns([2, 3])
     
     with col1:
-        # レーダーチャート
+        # レーダーチャート（サイズを小さく）
         labels = list(axis_scores.keys())
         scores = [axis_scores[label] / axis_max_scores[label] * 4 for label in labels]
         
@@ -331,26 +339,29 @@ def show_results():
         scores_plot = scores + scores[:1]
         angles_plot = angles + angles[:1]
         
-        # 日本語フォント設定
-        try:
-            font_path = "C:/Windows/Fonts/msgothic.ttc"
-            font_prop = fm.FontProperties(fname=font_path)
-            plt.rcParams['font.family'] = font_prop.get_name()
-        except:
-            plt.rcParams['font.sans-serif'] = ['MS Gothic', 'Yu Gothic', 'Hiragino Sans', 'Meiryo', 'DejaVu Sans']
-        
+        # 日本語フォント設定（文字化け対策）
+        plt.rcParams['font.sans-serif'] = ['MS Gothic', 'Yu Gothic', 'Hiragino Sans', 'Meiryo', 'DejaVu Sans', 'sans-serif']
         plt.rcParams['axes.unicode_minus'] = False
         
-        fig, ax = plt.subplots(figsize=(7, 7), subplot_kw=dict(polar=True))
+        # チャートサイズを縮小（8→5に変更）
+        fig, ax = plt.subplots(figsize=(5, 5), subplot_kw=dict(polar=True))
         ax.plot(angles_plot, scores_plot, 'o-', linewidth=2.5, color='#1f77b4', markersize=8)
         ax.fill(angles_plot, scores_plot, alpha=0.25, color='#1f77b4')
         
-        short_labels = [label.replace('経営', '').replace('事業計画の', '').replace('の仕組み', '').replace('の健全度', '')
-                       for label in labels]
-        ax.set_thetagrids(np.degrees(angles), short_labels, fontsize=9)
+        # ラベルを短縮
+        short_labels = [
+            "ビジョンの\n明確さ",
+            "計画の\n実行管理",
+            "組織体制の\n強さ",
+            "時間の\n使い方",
+            "数値管理の\n仕組み",
+            "収益性の\n健全度"
+        ]
+        
+        ax.set_thetagrids(np.degrees(angles), short_labels, fontsize=8)
         ax.set_ylim(0, 4)
         ax.set_yticks([1, 2, 3, 4])
-        ax.set_yticklabels(['1', '2', '3', '4'], fontsize=9)
+        ax.set_yticklabels(['1', '2', '3', '4'], fontsize=8)
         ax.grid(True, linewidth=0.8, alpha=0.6)
         
         st.pyplot(fig)
