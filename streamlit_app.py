@@ -4,6 +4,9 @@ import numpy as np
 import matplotlib.font_manager as fm
 from datetime import datetime
 import json
+import base64
+from io import BytesIO
+from matplotlib.backends.backend_pdf import PdfPages
 
 st.set_page_config(page_title="ADAMS 事業推進力診断ツール", layout="wide", initial_sidebar_state="collapsed")
 
@@ -49,6 +52,17 @@ st.markdown(f"""
     .stButton>button:hover {{
         background-color: {ADAMS_LIGHT_NAVY};
         color: white;
+    }}
+    @media print {{
+        .no-print {{
+            display: none !important;
+        }}
+        .print-only {{
+            display: block !important;
+        }}
+    }}
+    .print-only {{
+        display: none;
     }}
 </style>
 """, unsafe_allow_html=True)
@@ -149,6 +163,173 @@ def save_to_google_sheets(result_data):
     except Exception as e:
         st.error(f"データ保存エラー: {str(e)}")
         return False
+
+def create_radar_chart(axis_scores, axis_max_scores, labels):
+    """レーダーチャート作成（PDF用）"""
+    scores = [axis_scores[label] / axis_max_scores[label] * 4 for label in labels]
+    
+    angles = np.linspace(0, 2 * np.pi, len(labels), endpoint=False).tolist()
+    scores_plot = scores + scores[:1]
+    angles_plot = angles + angles[:1]
+    
+    fig, ax = plt.subplots(figsize=(6, 6), subplot_kw=dict(polar=True))
+    ax.plot(angles_plot, scores_plot, 'o-', linewidth=2.5, color=ADAMS_NAVY, markersize=8)
+    ax.fill(angles_plot, scores_plot, alpha=0.25, color=ADAMS_NAVY)
+    
+    # 英語ラベルを使用（文字化け対策）
+    english_labels = [diagnostic_data[label]["english_label"] for label in labels]
+    
+    ax.set_thetagrids(np.degrees(angles), english_labels, fontsize=12)
+    ax.set_ylim(0, 4)
+    ax.set_yticks([1, 2, 3, 4])
+    ax.set_yticklabels(['1', '2', '3', '4'], fontsize=10)
+    ax.grid(True, linewidth=0.8, alpha=0.6)
+    
+    return fig
+
+def generate_pdf_report(axis_scores, axis_max_scores, total_score, max_total_score, percentage, rank, rank_label):
+    """PDF診断レポート生成"""
+    from reportlab.lib.pagesizes import A4, letter
+    from reportlab.lib import colors
+    from reportlab.platypus import SimpleDocTemplate, Table, TableStyle, Paragraph, Spacer, Image
+    from reportlab.lib.styles import getSampleStyleSheet, ParagraphStyle
+    from reportlab.lib.units import inch
+    from reportlab.pdfbase import pdfmetrics
+    from reportlab.pdfbase.ttfonts import TTFont
+    from reportlab.lib.enums import TA_CENTER, TA_LEFT
+    
+    buffer = BytesIO()
+    
+    # フォント設定を試みる（失敗しても続行）
+    try:
+        import matplotlib.font_manager as fm
+        font_files = fm.findSystemFonts()
+        noto_fonts = [f for f in font_files if 'Noto' in f and 'CJK' in f and 'JP' in f]
+        if noto_fonts:
+            pdfmetrics.registerFont(TTFont('NotoSans', noto_fonts[0]))
+            font_name = 'NotoSans'
+        else:
+            font_name = 'Helvetica'
+    except:
+        font_name = 'Helvetica'
+    
+    # PDFドキュメント作成
+    doc = SimpleDocTemplate(buffer, pagesize=A4)
+    story = []
+    styles = getSampleStyleSheet()
+    
+    # カスタムスタイル
+    title_style = ParagraphStyle(
+        'CustomTitle',
+        parent=styles['Heading1'],
+        fontName=font_name,
+        fontSize=24,
+        textColor=colors.HexColor(ADAMS_NAVY),
+        alignment=TA_CENTER,
+        spaceAfter=30
+    )
+    
+    heading_style = ParagraphStyle(
+        'CustomHeading',
+        parent=styles['Heading2'],
+        fontName=font_name,
+        fontSize=16,
+        textColor=colors.HexColor(ADAMS_NAVY),
+        spaceAfter=12
+    )
+    
+    normal_style = ParagraphStyle(
+        'CustomNormal',
+        parent=styles['Normal'],
+        fontName=font_name,
+        fontSize=11,
+        spaceAfter=12
+    )
+    
+    # タイトル
+    story.append(Paragraph('Business Promotion Diagnostic Report', title_style))
+    story.append(Paragraph('Jigyou Suishin-ryoku Shindan Report', title_style))
+    story.append(Paragraph(f'Date: {datetime.now().strftime("%Y/%m/%d %H:%M")}', normal_style))
+    story.append(Spacer(1, 0.3*inch))
+    
+    # 総合評価
+    story.append(Paragraph(f'Overall Evaluation: Rank {rank} ({rank_label})', heading_style))
+    story.append(Paragraph(f'Total Score: {total_score} / {max_total_score} points ({percentage:.1f}%)', normal_style))
+    story.append(Spacer(1, 0.2*inch))
+    
+    # レーダーチャートを画像として挿入
+    labels = list(axis_scores.keys())
+    radar_fig = create_radar_chart(axis_scores, axis_max_scores, labels)
+    
+    img_buffer = BytesIO()
+    radar_fig.savefig(img_buffer, format='png', dpi=150, bbox_inches='tight')
+    img_buffer.seek(0)
+    plt.close(radar_fig)
+    
+    story.append(Image(img_buffer, width=4*inch, height=4*inch))
+    story.append(Spacer(1, 0.2*inch))
+    
+    # 凡例
+    story.append(Paragraph('Legend / Hanrei:', heading_style))
+    legend_data = [
+        ['Vision', 'Keiei Vision no Meikaku-sa'],
+        ['Planning', 'Jigyo Keikaku no Jikko Kanri'],
+        ['Organization', 'Soshiki Taisei no Tsuyosa'],
+        ['Time Mgmt', 'Keieisha no Jikan no Tsukaikata'],
+        ['KPI', 'Suuchi Kanri no Shikumi'],
+        ['Profitability', 'Shueki-sei no Kenzendo']
+    ]
+    legend_table = Table(legend_data, colWidths=[1.5*inch, 3.5*inch])
+    legend_table.setStyle(TableStyle([
+        ('FONTNAME', (0, 0), (-1, -1), font_name),
+        ('FONTSIZE', (0, 0), (-1, -1), 10),
+        ('TEXTCOLOR', (0, 0), (0, -1), colors.HexColor(ADAMS_NAVY)),
+        ('ALIGN', (0, 0), (-1, -1), 'LEFT'),
+        ('VALIGN', (0, 0), (-1, -1), 'MIDDLE'),
+        ('GRID', (0, 0), (-1, -1), 0.5, colors.grey)
+    ]))
+    story.append(legend_table)
+    story.append(Spacer(1, 0.3*inch))
+    
+    # 各軸スコア
+    story.append(Paragraph('Detailed Scores by Axis:', heading_style))
+    score_data = [['Axis', 'Score', 'Percentage']]
+    for axis_name, score in axis_scores.items():
+        max_score = axis_max_scores[axis_name]
+        pct = (score / max_score) * 100 if max_score > 0 else 0
+        english_label = diagnostic_data[axis_name]['english_label']
+        score_data.append([english_label, f'{score}/{max_score}', f'{pct:.1f}%'])
+    
+    score_table = Table(score_data, colWidths=[2*inch, 1.5*inch, 1.5*inch])
+    score_table.setStyle(TableStyle([
+        ('FONTNAME', (0, 0), (-1, -1), font_name),
+        ('FONTSIZE', (0, 0), (-1, -1), 11),
+        ('BACKGROUND', (0, 0), (-1, 0), colors.HexColor(ADAMS_NAVY)),
+        ('TEXTCOLOR', (0, 0), (-1, 0), colors.whitesmoke),
+        ('ALIGN', (0, 0), (-1, -1), 'CENTER'),
+        ('VALIGN', (0, 0), (-1, -1), 'MIDDLE'),
+        ('GRID', (0, 0), (-1, -1), 1, colors.black),
+        ('ROWBACKGROUNDS', (0, 1), (-1, -1), [colors.white, colors.lightgrey])
+    ]))
+    story.append(score_table)
+    story.append(Spacer(1, 0.5*inch))
+    
+    # フッター
+    footer_style = ParagraphStyle(
+        'Footer',
+        parent=styles['Normal'],
+        fontName=font_name,
+        fontSize=8,
+        textColor=colors.grey,
+        alignment=TA_CENTER
+    )
+    story.append(Paragraph('(C) 2024 ADAMS Management Consulting Office. All Rights Reserved.', footer_style))
+    story.append(Paragraph('Unauthorized reproduction or copying of this diagnostic tool is prohibited.', footer_style))
+    
+    # PDF生成
+    doc.build(story)
+    buffer.seek(0)
+    return buffer
 
 def show_intro():
     """イントロページ"""
@@ -353,6 +534,43 @@ def show_results():
     # 結果を保存
     save_to_google_sheets(result_data)
     
+    # 印刷・PDF出力ボタン（no-printクラスで印刷時非表示）
+    st.markdown('<div class="no-print">', unsafe_allow_html=True)
+    col_btn1, col_btn2 = st.columns(2)
+    
+    with col_btn1:
+        # ブラウザ印刷ボタン
+        st.markdown("""
+        <script>
+        function printPage() {
+            window.print();
+        }
+        </script>
+        """, unsafe_allow_html=True)
+        
+        if st.button("🖨️ 印刷する", use_container_width=True, key="print_btn"):
+            st.markdown("""
+            <script>
+            window.print();
+            </script>
+            """, unsafe_allow_html=True)
+    
+    with col_btn2:
+        # PDFダウンロードボタン
+        pdf_buffer = generate_pdf_report(axis_scores, axis_max_scores, total_score, 
+                                         max_total_score, percentage, rank, rank_label)
+        
+        st.download_button(
+            label="📄 PDFダウンロード",
+            data=pdf_buffer,
+            file_name=f"診断結果_{datetime.now().strftime('%Y%m%d_%H%M')}.pdf",
+            mime="application/pdf",
+            use_container_width=True
+        )
+    
+    st.markdown('</div>', unsafe_allow_html=True)
+    st.write("---")
+    
     # 総合スコア表示
     st.write("### 🎯 総合評価")
     
@@ -493,11 +711,13 @@ def show_results():
     
     st.info("✅ 診断結果は自動的に記録されました")
     
-    # アクションボタン
+    # アクションボタン（no-printクラス）
+    st.markdown('<div class="no-print">', unsafe_allow_html=True)
     if st.button("🔄 診断をやり直す", use_container_width=True):
         st.session_state.scores = {}
         st.session_state.page = 'intro'
         st.rerun()
+    st.markdown('</div>', unsafe_allow_html=True)
     
     # ADAMSフッター
     st.markdown(f"""
