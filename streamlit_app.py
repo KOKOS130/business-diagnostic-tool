@@ -43,14 +43,6 @@ st.markdown(f"""
         background-color: {ADAMS_LIGHT_NAVY};
         color: white;
     }}
-    .adams-brand {{
-        text-align: center;
-        font-size: 1.5rem;
-        font-weight: bold;
-        color: {ADAMS_NAVY};
-        padding: 1rem;
-        margin-bottom: 1rem;
-    }}
 </style>
 """, unsafe_allow_html=True)
 
@@ -180,18 +172,16 @@ def save_to_google_sheets(result_data):
 
 def show_intro():
     """イントロページ"""
-    # ADAMSロゴ（控えめなサイズ）
-    col1, col2, col3 = st.columns([1, 2, 1])
-    with col2:
-        try:
-            st.image("https://raw.githubusercontent.com/KOKOS130/business-diagnostic-tool/main/adams_logo.png", width=150)
-        except:
-            # ロゴが読み込めない場合はテキストで表示
-            st.markdown(f"""
-            <div style="text-align: center; color: {ADAMS_NAVY}; font-weight: bold; font-size: 1rem; margin-bottom: 0.5rem;">
-                ㈱ADAMS Management Consulting Office
-            </div>
-            """, unsafe_allow_html=True)
+    # ADAMSロゴを左上に配置
+    try:
+        st.image("https://raw.githubusercontent.com/KOKOS130/business-diagnostic-tool/main/adams_logo.png", width=120)
+    except:
+        # ロゴが読み込めない場合はテキストで表示
+        st.markdown(f"""
+        <div style="color: {ADAMS_NAVY}; font-weight: bold; font-size: 0.9rem; margin-bottom: 1rem;">
+            ㈱ADAMS Management Consulting Office
+        </div>
+        """, unsafe_allow_html=True)
     
     st.markdown('<div class="main-header">事業推進力診断ツール</div>', unsafe_allow_html=True)
     st.markdown('<div class="sub-header">所要時間: 約15分 | 全36問 | その場で結果がわかります</div>', unsafe_allow_html=True)
@@ -261,12 +251,15 @@ def show_intro():
 
 def show_questions():
     """質問ページ"""
-    # ADAMSブランド表示（小サイズ）
-    st.markdown(f"""
-    <div style="text-align: center; color: {ADAMS_NAVY}; font-weight: bold; font-size: 1.2rem; margin-bottom: 0.5rem;">
-        ㈱ADAMS 事業推進力診断ツール
-    </div>
-    """, unsafe_allow_html=True)
+    # ADAMSロゴを左上に配置（小サイズ）
+    try:
+        st.image("https://raw.githubusercontent.com/KOKOS130/business-diagnostic-tool/main/adams_logo.png", width=100)
+    except:
+        st.markdown(f"""
+        <div style="color: {ADAMS_NAVY}; font-weight: bold; font-size: 0.9rem; margin-bottom: 0.5rem;">
+            ㈱ADAMS 事業推進力診断ツール
+        </div>
+        """, unsafe_allow_html=True)
     
     st.write("## 📝 診断設問")
     
@@ -348,12 +341,15 @@ def get_rank(percentage):
 
 def show_results():
     """結果ページ"""
-    # ADAMSブランド表示
-    st.markdown(f"""
-    <div style="text-align: center; color: {ADAMS_NAVY}; font-weight: bold; font-size: 1.2rem; margin-bottom: 0.5rem;">
-        ㈱ADAMS 事業推進力診断ツール
-    </div>
-    """, unsafe_allow_html=True)
+    # ADAMSロゴを左上に配置（小サイズ）
+    try:
+        st.image("https://raw.githubusercontent.com/KOKOS130/business-diagnostic-tool/main/adams_logo.png", width=100)
+    except:
+        st.markdown(f"""
+        <div style="color: {ADAMS_NAVY}; font-weight: bold; font-size: 0.9rem; margin-bottom: 0.5rem;">
+            ㈱ADAMS 事業推進力診断ツール
+        </div>
+        """, unsafe_allow_html=True)
     
     st.write("## 📊 診断結果")
     
