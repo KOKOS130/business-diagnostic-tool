@@ -3,6 +3,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 import matplotlib.font_manager as fm
 from datetime import datetime
+import os
 
 st.set_page_config(page_title="事業推進力診断ツール", layout="wide", initial_sidebar_state="collapsed")
 
@@ -104,41 +105,37 @@ options = {
     1: "全く当てはまらない"
 }
 
-def configure_japanese_font():
-    """日本語フォントの設定（より確実な方法）"""
-    import platform
-    import os
+def setup_japanese_font():
+    """日本語フォントの設定 - Streamlit Cloud対応版"""
+    # フォントキャッシュを再構築
+    fm._load_fontmanager(try_read_cache=False)
     
-    # システムに応じたフォント候補
-    font_candidates = []
-    
-    system = platform.system()
-    if system == 'Windows':
-        font_candidates = ['MS Gothic', 'Yu Gothic', 'Meiryo', 'MS PGothic']
-    elif system == 'Darwin':  # macOS
-        font_candidates = ['Hiragino Sans', 'Hiragino Kaku Gothic Pro', 'AppleGothic']
-    else:  # Linux
-        font_candidates = ['Noto Sans CJK JP', 'TakaoGothic', 'IPAGothic', 'VL Gothic']
-    
-    # 利用可能なフォントを探す
+    # 利用可能なフォントを確認
     available_fonts = [f.name for f in fm.fontManager.ttflist]
     
+    # Noto Sans CJK JPを優先的に使用（packages.txtでインストール）
+    japanese_fonts = [
+        'Noto Sans CJK JP',
+        'Noto Sans JP',
+        'IPAGothic',
+        'TakaoGothic',
+        'DejaVu Sans'
+    ]
+    
     selected_font = None
-    for candidate in font_candidates:
-        if candidate in available_fonts:
-            selected_font = candidate
+    for font in japanese_fonts:
+        if font in available_fonts:
+            selected_font = font
             break
     
-    # フォント設定
     if selected_font:
         plt.rcParams['font.sans-serif'] = [selected_font]
     else:
-        # フォールバック: システムの全日本語フォントを試す
-        japanese_fonts = [f.name for f in fm.fontManager.ttflist if 'Gothic' in f.name or 'Mincho' in f.name or 'CJK' in f.name]
-        if japanese_fonts:
-            plt.rcParams['font.sans-serif'] = [japanese_fonts[0]]
+        # フォールバック: システムで利用可能な日本語フォントを検索
+        cjk_fonts = [f.name for f in fm.fontManager.ttflist if 'CJK' in f.name or 'Gothic' in f.name or 'Noto' in f.name]
+        if cjk_fonts:
+            plt.rcParams['font.sans-serif'] = [cjk_fonts[0]]
         else:
-            # 最終フォールバック
             plt.rcParams['font.sans-serif'] = ['DejaVu Sans']
     
     plt.rcParams['axes.unicode_minus'] = False
@@ -339,7 +336,7 @@ def show_results():
     
     with col1:
         # 日本語フォント設定
-        configure_japanese_font()
+        setup_japanese_font()
         
         # レーダーチャート
         labels = list(axis_scores.keys())
