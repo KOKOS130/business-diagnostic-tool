@@ -35,6 +35,13 @@ st.markdown(f"""
         padding: 1rem;
         border-top: 2px solid {ADAMS_NAVY};
     }}
+    .copyright-notice {{
+        text-align: center;
+        color: #999;
+        font-size: 0.8rem;
+        margin-top: 1rem;
+        padding: 0.5rem;
+    }}
     .stButton>button {{
         background-color: {ADAMS_NAVY};
         color: white;
@@ -52,9 +59,10 @@ if 'page' not in st.session_state:
 if 'scores' not in st.session_state:
     st.session_state.scores = {}
 
-# 診断データ構造
+# 診断データ構造（英語ラベル追加）
 diagnostic_data = {
     "経営ビジョンの明確さ": {
+        "english_label": "Vision",
         "questions": [
             "将来のビジョン（3年後にどうなりたいか）を、社員や取引先に明確に説明できますか？",
             "自社の「強み」と「弱み」をそれぞれ3つ以上、すぐに答えることができますか？",
@@ -65,6 +73,7 @@ diagnostic_data = {
         ]
     },
     "事業計画の実行管理": {
+        "english_label": "Planning",
         "questions": [
             "今年度の事業計画書（売上目標、利益目標など）を作成していますか？",
             "事業計画の進捗状況を、定期的（週次または月次）にチェックしていますか？",
@@ -76,6 +85,7 @@ diagnostic_data = {
         ]
     },
     "組織体制の強さ": {
+        "english_label": "Organization",
         "questions": [
             "あなたが1週間不在にしても、会社の業務は問題なく回りますか？",
             "事業運営を任せられる「右腕」となる人材がいますか？",
@@ -86,6 +96,7 @@ diagnostic_data = {
         ]
     },
     "経営者の時間の使い方": {
+        "english_label": "Time Mgmt",
         "questions": [
             "1週間のうち、経営戦略を考える時間が20%以上（週8時間以上）ありますか？",
             "日々の業務に追われて、経営者としての本来の仕事に集中できていますか？",
@@ -96,6 +107,7 @@ diagnostic_data = {
         ]
     },
     "数値管理の仕組み": {
+        "english_label": "KPI",
         "questions": [
             "重要な数値指標（売上、利益、顧客数など）を定め、週次で確認していますか？",
             "部門ごと、個人ごとに、明確な目標数値が設定されていますか？",
@@ -106,6 +118,7 @@ diagnostic_data = {
         ]
     },
     "収益性の健全度": {
+        "english_label": "Profitability",
         "questions": [
             "過去3年間で、売上高は安定的に成長していますか？",
             "営業利益率（売上に対する利益の割合）は10%以上ありますか？",
@@ -124,39 +137,6 @@ options = {
     2: "あまり当てはまらない",
     1: "全く当てはまらない"
 }
-
-def setup_japanese_font():
-    """日本語フォントの設定"""
-    fm._load_fontmanager(try_read_cache=False)
-    available_fonts = sorted(set([f.name for f in fm.fontManager.ttflist]))
-    
-    japanese_font_candidates = [
-        'Noto Sans CJK JP', 'Noto Sans JP', 'Noto Sans Mono CJK JP',
-        'IPAexGothic', 'IPAGothic', 'TakaoGothic', 'VL Gothic',
-        'Hiragino Sans', 'Hiragino Kaku Gothic Pro',
-        'Yu Gothic', 'MS Gothic', 'Meiryo'
-    ]
-    
-    selected_font = None
-    for candidate in japanese_font_candidates:
-        if candidate in available_fonts:
-            selected_font = candidate
-            break
-    
-    if not selected_font:
-        for font in available_fonts:
-            if 'CJK' in font or 'Gothic' in font or 'Noto' in font:
-                selected_font = font
-                break
-    
-    if selected_font:
-        plt.rcParams['font.family'] = 'sans-serif'
-        plt.rcParams['font.sans-serif'] = [selected_font, 'DejaVu Sans']
-    else:
-        plt.rcParams['font.family'] = 'sans-serif'
-        plt.rcParams['font.sans-serif'] = ['DejaVu Sans']
-    
-    plt.rcParams['axes.unicode_minus'] = False
 
 def save_to_google_sheets(result_data):
     """Googleスプレッドシートに結果を保存（将来実装）"""
@@ -246,6 +226,10 @@ def show_intro():
     <div class="adams-footer">
         <strong>㈱ADAMS Management Consulting Office</strong><br>
         本診断ツールは㈱ADAMSが提供するクライアント様向けサービスです
+    </div>
+    <div class="copyright-notice">
+        © 2024 ADAMS Management Consulting Office. All Rights Reserved.<br>
+        本診断ツールの無断転用・複製を禁じます
     </div>
     """, unsafe_allow_html=True)
 
@@ -404,8 +388,7 @@ def show_results():
     col1, col2 = st.columns([2, 3])
     
     with col1:
-        setup_japanese_font()
-        
+        # レーダーチャート（英語ラベル使用）
         labels = list(axis_scores.keys())
         scores = [axis_scores[label] / axis_max_scores[label] * 4 for label in labels]
         
@@ -417,16 +400,10 @@ def show_results():
         ax.plot(angles_plot, scores_plot, 'o-', linewidth=2.5, color=ADAMS_NAVY, markersize=8)
         ax.fill(angles_plot, scores_plot, alpha=0.25, color=ADAMS_NAVY)
         
-        short_labels = [
-            "ビジョンの\n明確さ",
-            "計画の\n実行管理",
-            "組織体制の\n強さ",
-            "時間の\n使い方",
-            "数値管理の\n仕組み",
-            "収益性の\n健全度"
-        ]
+        # 英語ラベルを使用（文字化け対策）
+        english_labels = [diagnostic_data[label]["english_label"] for label in labels]
         
-        ax.set_thetagrids(np.degrees(angles), short_labels, fontsize=9)
+        ax.set_thetagrids(np.degrees(angles), english_labels, fontsize=10)
         ax.set_ylim(0, 4)
         ax.set_yticks([1, 2, 3, 4])
         ax.set_yticklabels(['1', '2', '3', '4'], fontsize=8)
@@ -434,6 +411,17 @@ def show_results():
         
         st.pyplot(fig)
         plt.close()
+        
+        # 凡例（日本語と英語の対応）
+        st.caption("""
+        **凡例**:  
+        Vision = 経営ビジョンの明確さ  
+        Planning = 事業計画の実行管理  
+        Organization = 組織体制の強さ  
+        Time Mgmt = 経営者の時間の使い方  
+        KPI = 数値管理の仕組み  
+        Profitability = 収益性の健全度
+        """)
     
     with col2:
         st.write("#### 📊 各軸スコア")
@@ -517,6 +505,10 @@ def show_results():
         <strong>㈱ADAMS Management Consulting Office</strong><br>
         本診断結果は㈱ADAMSにて記録・管理されます<br>
         診断日時: {datetime.now().strftime('%Y年%m月%d日 %H:%M')}
+    </div>
+    <div class="copyright-notice">
+        © 2024 ADAMS Management Consulting Office. All Rights Reserved.<br>
+        本診断ツールの無断転用・複製を禁じます
     </div>
     """, unsafe_allow_html=True)
 
