@@ -64,9 +64,23 @@ st.markdown(f"""
         font-weight: 400;
     }}
     
-    /* Streamlitカラムの上部余白を削除 */
+    /* Streamlitカラムの上部余白を完全に削除 */
     [data-testid="column"] {{
         padding-top: 0 !important;
+        margin-top: 0 !important;
+    }}
+    
+    [data-testid="column"] > div {{
+        padding-top: 0 !important;
+        margin-top: 0 !important;
+    }}
+    
+    div[data-testid="stVerticalBlock"] > div {{
+        padding-top: 0 !important;
+    }}
+    
+    .element-container {{
+        margin-top: 0 !important;
     }}
     
     /* カードスタイル */
@@ -802,12 +816,15 @@ def show_intro():
     st.markdown('<div class="sub-header">✨ 所要時間: 約15分 | 全36問 | その場で結果がわかります ✨</div>', unsafe_allow_html=True)
     st.markdown('</div>', unsafe_allow_html=True)
     
-    st.markdown('<h2 style="text-align: center; margin-top: 2rem; margin-bottom: 1.5rem; color: #243666;">🎯 この診断について</h2>', unsafe_allow_html=True)
+    st.markdown('<h2 style="text-align: center; margin-top: 2rem; margin-bottom: 0.5rem; color: #243666;">🎯 この診断について</h2>', unsafe_allow_html=True)
+    
+    # カラムの上部余白を強制的に削除
+    st.markdown('<style>div[data-testid="column"] {padding-top: 0 !important;}</style>', unsafe_allow_html=True)
     
     col1, col2 = st.columns(2, gap="medium")
     
     with col1:
-        st.markdown('<div class="info-card" style="margin-top: 0;">', unsafe_allow_html=True)
+        st.markdown('<div class="info-card" style="margin-top: 0 !important;">', unsafe_allow_html=True)
         st.write("""
         ### 📋 診断内容
         事業推進力を**6つの軸**で診断します
