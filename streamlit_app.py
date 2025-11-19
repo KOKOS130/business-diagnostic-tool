@@ -64,6 +64,11 @@ st.markdown(f"""
         font-weight: 400;
     }}
     
+    /* Streamlitカラムの上部余白を削除 */
+    [data-testid="column"] {{
+        padding-top: 0 !important;
+    }}
+    
     /* カードスタイル */
     .info-card {{
         background: white;
@@ -71,6 +76,7 @@ st.markdown(f"""
         padding: 2rem;
         box-shadow: 0 4px 6px rgba(0, 0, 0, 0.07), 0 2px 4px rgba(0, 0, 0, 0.05);
         margin-bottom: 1.5rem;
+        margin-top: 0;
         transition: transform 0.3s ease, box-shadow 0.3s ease;
         border: 1px solid rgba(36, 54, 102, 0.1);
     }}
@@ -796,12 +802,12 @@ def show_intro():
     st.markdown('<div class="sub-header">✨ 所要時間: 約15分 | 全36問 | その場で結果がわかります ✨</div>', unsafe_allow_html=True)
     st.markdown('</div>', unsafe_allow_html=True)
     
-    st.markdown('<h2 style="text-align: center; margin-top: 2rem; margin-bottom: 1rem; color: #243666;">🎯 この診断について</h2>', unsafe_allow_html=True)
+    st.markdown('<h2 style="text-align: center; margin-top: 2rem; margin-bottom: 1.5rem; color: #243666;">🎯 この診断について</h2>', unsafe_allow_html=True)
     
-    col1, col2 = st.columns(2)
+    col1, col2 = st.columns(2, gap="medium")
     
     with col1:
-        st.markdown('<div class="info-card">', unsafe_allow_html=True)
+        st.markdown('<div class="info-card" style="margin-top: 0;">', unsafe_allow_html=True)
         st.write("""
         ### 📋 診断内容
         事業推進力を**6つの軸**で診断します
@@ -812,7 +818,7 @@ def show_intro():
         """)
         st.markdown('</div>', unsafe_allow_html=True)
         
-        st.markdown('<div class="info-card">', unsafe_allow_html=True)
+        st.markdown('<div class="info-card" style="margin-top: 0;">', unsafe_allow_html=True)
         st.write("""
         ### 📊 わかること
         - 総合スコアとランク評価
@@ -835,7 +841,7 @@ def show_intro():
         """)
         st.markdown('</div>', unsafe_allow_html=True)
         
-        st.markdown('<div class="info-card">', unsafe_allow_html=True)
+        st.markdown('<div class="info-card" style="margin-top: 0;">', unsafe_allow_html=True)
         st.write("""
         ### ✅ 回答方法
         各設問に対して、現状を最も表している選択肢を選んでください
