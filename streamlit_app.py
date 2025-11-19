@@ -872,15 +872,14 @@ def show_intro():
         </div>
     </div>
     """, unsafe_allow_html=True)
-    st.write("")
+
     st.info("""
     💡 **診断のポイント**  
     ✓ 直感で正直に回答してください  
     ✓ 理想ではなく、**現状**を評価してください  
     ✓ 全ての設問に回答してください
     """)
-    
-    st.write("")
+
     if st.button("📝 診断を開始する", type="primary", use_container_width=True):
         st.session_state.page = 'questions'
         st.rerun()
@@ -919,9 +918,7 @@ def show_questions():
     progress = answered / total_questions if total_questions > 0 else 0
     st.progress(progress)
     st.write(f"**進捗: {answered}/{total_questions} 問回答済み** ({int(progress*100)}%)")
-    
-    st.write("")
-    
+
     # 各軸の質問を表示
     for axis_idx, (axis_name, axis_data) in enumerate(diagnostic_data.items(), 1):
         icon = axis_data.get('icon', '📌')
@@ -1027,116 +1024,125 @@ def show_results():
     save_to_google_sheets(result_data)
     
     # 総合スコア表示
-    st.write("### 🎯 総合評価")
+    st.markdown('<h3 style="margin-bottom: 1rem;">🎯 総合評価</h3>', unsafe_allow_html=True)
     
-    col1, col2, col3 = st.columns(3)
-    
-    with col1:
-        st.markdown(f"""
+    st.markdown(f"""
+    <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 1.5rem; margin-top: 0;">
         <div style='text-align: center; padding: 2.5rem; background: linear-gradient(135deg, {rank_color} 0%, {rank_color}dd 100%); color: white; border-radius: 20px; box-shadow: 0 8px 16px rgba(0,0,0,0.15);'>
             <div style='font-size: 4rem; margin-bottom: 0.5rem;'>{rank_icon}</div>
             <div style='font-size: 2.5rem; font-weight: 800; margin-bottom: 0.5rem;'>ランク {rank}</div>
             <div style='font-size: 1.3rem; font-weight: 500;'>{rank_label}</div>
         </div>
-        """, unsafe_allow_html=True)
-    
-    with col2:
-        st.markdown('<div class="info-card">', unsafe_allow_html=True)
-        st.metric("総合スコア", f"{total_score} / {max_total_score} 点")
-        st.metric("達成率", f"{percentage:.1f}%")
-        st.markdown('</div>', unsafe_allow_html=True)
-    
-    with col3:
-        st.markdown('<div class="info-card">', unsafe_allow_html=True)
-        st.write("#### 📋 ランク基準")
-        st.write("""
-        - **A**: 85%以上（優良）
-        - **B**: 70-84%（標準）
-        - **C**: 55-69%（要改善）
-        - **D**: 55%未満（危機）
-        """)
-        st.markdown('</div>', unsafe_allow_html=True)
-    
-    st.write("")
-    
-    # レーダーチャートと詳細スコア
-    st.write("### 📈 6軸バランス分析")
-    
-    col1, col2 = st.columns([2, 3])
-    
-    with col1:
-        st.markdown('<div class="info-card">', unsafe_allow_html=True)
-        # レーダーチャート（英語ラベル使用）
-        labels = list(axis_scores.keys())
-        scores = [axis_scores[label] / axis_max_scores[label] * 4 for label in labels]
-        
-        angles = np.linspace(0, 2 * np.pi, len(labels), endpoint=False).tolist()
-        scores_plot = scores + scores[:1]
-        angles_plot = angles + angles[:1]
-        
-        fig, ax = plt.subplots(figsize=(5, 5), subplot_kw=dict(polar=True))
-        
-        # グラデーション効果
-        ax.plot(angles_plot, scores_plot, 'o-', linewidth=3, color=ADAMS_NAVY, markersize=10)
-        ax.fill(angles_plot, scores_plot, alpha=0.3, color=ADAMS_ACCENT)
-        
-        # 英語ラベルを使用（文字化け対策）
-        english_labels = [diagnostic_data[label]["english_label"] for label in labels]
-        
-        ax.set_thetagrids(np.degrees(angles), english_labels, fontsize=11, weight='bold')
-        ax.set_ylim(0, 4)
-        ax.set_yticks([1, 2, 3, 4])
-        ax.set_yticklabels(['1', '2', '3', '4'], fontsize=9)
-        ax.grid(True, linewidth=1, alpha=0.3, color=ADAMS_NAVY)
-        
-        # 背景色
-        ax.set_facecolor('#f8f9fa')
-        fig.patch.set_facecolor('white')
-        
-        st.pyplot(fig)
-        plt.close()
-        
-        # 凡例（日本語と英語の対応）
-        st.caption("""
-        **凡例**:  
-        Vision = 経営ビジョンの明確さ  
-        Planning = 事業計画の実行管理  
-        Organization = 組織体制の強さ  
-        Time Mgmt = 経営者の時間の使い方  
-        KPI = 数値管理の仕組み  
-        Profitability = 収益性の健全度
-        """)
-        st.markdown('</div>', unsafe_allow_html=True)
-    
-    with col2:
-        st.markdown('<div class="info-card">', unsafe_allow_html=True)
-        st.write("#### 📊 各軸スコア")
-        for idx, (axis_name, score) in enumerate(axis_scores.items(), 1):
-            icon = diagnostic_data[axis_name].get('icon', '📌')
-            max_score = axis_max_scores[axis_name]
-            pct = (score / max_score) * 100 if max_score > 0 else 0
-            
-            if pct >= 75:
-                color = "🟢"
-                badge_color = "#d4edda"
-            elif pct >= 50:
-                color = "🟡"
-                badge_color = "#fff3cd"
-            else:
-                color = "🔴"
-                badge_color = "#f8d7da"
-            
-            st.markdown(f"""
-            <div style='background: {badge_color}; padding: 0.8rem; border-radius: 10px; margin-bottom: 0.8rem;'>
-                <strong>{color} {icon} {axis_name}</strong><br>
-                <span style='font-size: 1.1rem;'>{score} / {max_score} 点 ({pct:.1f}%)</span>
+        <div class="info-card">
+            <div style="text-align: center;">
+                <div style="font-size: 0.9rem; color: #5a6c7d; margin-bottom: 0.5rem;">総合スコア</div>
+                <div style="font-size: 2rem; font-weight: 700; color: {ADAMS_NAVY};">{total_score} / {max_total_score} 点</div>
             </div>
-            """, unsafe_allow_html=True)
-            st.progress(pct / 100)
-        st.markdown('</div>', unsafe_allow_html=True)
+            <div style="text-align: center; margin-top: 1.5rem;">
+                <div style="font-size: 0.9rem; color: #5a6c7d; margin-bottom: 0.5rem;">達成率</div>
+                <div style="font-size: 2rem; font-weight: 700; color: {ADAMS_NAVY};">{percentage:.1f}%</div>
+            </div>
+        </div>
+        <div class="info-card">
+            <h4 style="margin: 0 0 1rem 0; color: {ADAMS_NAVY};">📋 ランク基準</h4>
+            <ul style="margin: 0; padding-left: 1.5rem; line-height: 1.8;">
+                <li><strong>A</strong>: 85%以上（優良）</li>
+                <li><strong>B</strong>: 70-84%（標準）</li>
+                <li><strong>C</strong>: 55-69%（要改善）</li>
+                <li><strong>D</strong>: 55%未満（危機）</li>
+            </ul>
+        </div>
+    </div>
+    """, unsafe_allow_html=True)
+
+    # レーダーチャートと詳細スコア
+    st.markdown('<h3 style="margin-top: 2rem; margin-bottom: 1rem;">📈 6軸バランス分析</h3>', unsafe_allow_html=True)
     
-    st.write("")
+    # レーダーチャート生成
+    labels = list(axis_scores.keys())
+    scores = [axis_scores[label] / axis_max_scores[label] * 4 for label in labels]
     
+    angles = np.linspace(0, 2 * np.pi, len(labels), endpoint=False).tolist()
+    scores_plot = scores + scores[:1]
+    angles_plot = angles + angles[:1]
+    
+    fig, ax = plt.subplots(figsize=(5, 5), subplot_kw=dict(polar=True))
+    
+    # グラデーション効果
+    ax.plot(angles_plot, scores_plot, 'o-', linewidth=3, color=ADAMS_NAVY, markersize=10)
+    ax.fill(angles_plot, scores_plot, alpha=0.3, color=ADAMS_ACCENT)
+    
+    # 英語ラベルを使用（文字化け対策）
+    english_labels = [diagnostic_data[label]["english_label"] for label in labels]
+    
+    ax.set_thetagrids(np.degrees(angles), english_labels, fontsize=11, weight='bold')
+    ax.set_ylim(0, 4)
+    ax.set_yticks([1, 2, 3, 4])
+    ax.set_yticklabels(['1', '2', '3', '4'], fontsize=9)
+    ax.grid(True, linewidth=1, alpha=0.3, color=ADAMS_NAVY)
+    
+    # 背景色
+    ax.set_facecolor('#f8f9fa')
+    fig.patch.set_facecolor('white')
+    
+    # チャートをバッファに保存
+    from io import BytesIO
+    import base64
+    buf = BytesIO()
+    fig.savefig(buf, format='png', bbox_inches='tight', dpi=150)
+    buf.seek(0)
+    img_base64 = base64.b64encode(buf.read()).decode()
+    plt.close()
+    
+    # 各軸スコアのHTML生成
+    axis_scores_html = ""
+    for idx, (axis_name, score) in enumerate(axis_scores.items(), 1):
+        icon = diagnostic_data[axis_name].get('icon', '📌')
+        max_score = axis_max_scores[axis_name]
+        pct = (score / max_score) * 100 if max_score > 0 else 0
+        
+        if pct >= 75:
+            color = "🟢"
+            badge_color = "#d4edda"
+        elif pct >= 50:
+            color = "🟡"
+            badge_color = "#fff3cd"
+        else:
+            color = "🔴"
+            badge_color = "#f8d7da"
+        
+        axis_scores_html += f"""
+        <div style='background: {badge_color}; padding: 0.8rem; border-radius: 10px; margin-bottom: 0.8rem;'>
+            <strong>{color} {icon} {axis_name}</strong><br>
+            <span style='font-size: 1.1rem;'>{score} / {max_score} 点 ({pct:.1f}%)</span>
+            <div style='width: 100%; background: #e0e0e0; border-radius: 10px; height: 8px; margin-top: 0.5rem; overflow: hidden;'>
+                <div style='width: {pct}%; background: {ADAMS_NAVY}; height: 100%; border-radius: 10px;'></div>
+            </div>
+        </div>
+        """
+    
+    # HTML Grid レイアウト（2カラム: レーダーチャート + 各軸スコア）
+    st.markdown(f"""
+    <div style="display: grid; grid-template-columns: 2fr 3fr; gap: 1.5rem; margin-top: 0;">
+        <div class="info-card">
+            <img src="data:image/png;base64,{img_base64}" style="width: 100%; height: auto;">
+            <div style="margin-top: 1rem; padding: 0.8rem; background: #f8f9fa; border-radius: 8px; font-size: 0.85rem; line-height: 1.6;">
+                <strong>凡例</strong>:<br>
+                Vision = 経営ビジョンの明確さ<br>
+                Planning = 事業計画の実行管理<br>
+                Organization = 組織体制の強さ<br>
+                Time Mgmt = 経営者の時間の使い方<br>
+                KPI = 数値管理の仕組み<br>
+                Profitability = 収益性の健全度
+            </div>
+        </div>
+        <div class="info-card">
+            <h4 style="margin: 0 0 1rem 0; color: {ADAMS_NAVY};">📊 各軸スコア</h4>
+            {axis_scores_html}
+        </div>
+    </div>
+    """, unsafe_allow_html=True)
+
     # 優先改善課題
     st.write("### 🎯 優先改善課題 TOP3")
     
@@ -1151,16 +1157,14 @@ def show_results():
         
         with st.expander(f"{medals[idx]} {priorities[idx]}: {icon} {axis_name} ({pct:.1f}%)", expanded=(idx==0)):
             st.write(f"**現状スコア**: {score} / {axis_max_scores[axis_name]} 点")
-            st.write("")
+
             st.write("**💡 改善すべきテーマ**")
             
             # 改善すべきテーマを取得して表示
             themes = get_improvement_themes(axis_name, pct)
             for theme in themes:
                 st.write(theme)
-    
-    st.write("")
-    
+
     # ランク別のメッセージ
     st.markdown('<div class="info-card">', unsafe_allow_html=True)
     st.write("### 💡 総合診断")
@@ -1191,13 +1195,9 @@ def show_results():
         事業推進の仕組みが十分に機能していません。
         """)
     st.markdown('</div>', unsafe_allow_html=True)
-    
-    st.write("")
-    
+
     st.info("💬 詳しい改善アクションプランについては、ADAMSコンサルタントにお問い合わせください")
-    
-    st.write("")
-    
+
     # 印刷・PDF出力ボタン（no-printクラスで印刷時非表示）
     st.markdown('<div class="no-print">', unsafe_allow_html=True)
     
@@ -1205,31 +1205,34 @@ def show_results():
     pdf_buffer = generate_pdf_report(axis_scores, axis_max_scores, total_score, 
                                      max_total_score, percentage, rank, rank_label)
     
-    col_btn1, col_btn2 = st.columns(2)
+    # ボタンをHTML Gridで配置（白いブロック対策）
+    st.markdown('<div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-top: 0;">', unsafe_allow_html=True)
     
-    with col_btn1:
-        # ブラウザ印刷ボタン
-        if st.button("🖨️ 印刷する", use_container_width=True, key="print_btn"):
-            st.markdown("""
-            <script>
-            setTimeout(function() {
-                window.print();
-            }, 100);
-            </script>
-            """, unsafe_allow_html=True)
+    # 左側: 印刷ボタン（HTML Gridの1列目）
+    st.markdown('<div style="grid-column: 1;">', unsafe_allow_html=True)
+    if st.button("🖨️ 印刷する", use_container_width=True, key="print_btn"):
+        st.markdown("""
+        <script>
+        setTimeout(function() {
+            window.print();
+        }, 100);
+        </script>
+        """, unsafe_allow_html=True)
+    st.markdown('</div>', unsafe_allow_html=True)
     
-    with col_btn2:
-        # PDFダウンロードボタン
-        st.download_button(
-            label="📄 PDFダウンロード",
-            data=pdf_buffer,
-            file_name=f"ADAMS_診断結果_{datetime.now().strftime('%Y%m%d_%H%M')}.pdf",
-            mime="application/pdf",
-            use_container_width=True
-        )
+    # 右側: PDFダウンロードボタン（HTML Gridの2列目）
+    st.markdown('<div style="grid-column: 2;">', unsafe_allow_html=True)
+    st.download_button(
+        label="📄 PDFダウンロード",
+        data=pdf_buffer,
+        file_name=f"ADAMS_診断結果_{datetime.now().strftime('%Y%m%d_%H%M')}.pdf",
+        mime="application/pdf",
+        use_container_width=True
+    )
+    st.markdown('</div>', unsafe_allow_html=True)
     
-    st.write("")
-    
+    st.markdown('</div>', unsafe_allow_html=True)
+
     # 診断をやり直すボタン
     if st.button("🔄 診断をやり直す", use_container_width=True):
         st.session_state.scores = {}
