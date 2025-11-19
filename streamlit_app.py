@@ -102,14 +102,13 @@ st.markdown(f"""
     /* カードスタイル */
     .info-card {{
         background: white;
-        border-radius: 16px;
-        padding: 2rem;
-        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.07), 0 2px 4px rgba(0, 0, 0, 0.05);
+        border-radius: 12px;
+        padding: 1.2rem;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.06);
         margin-bottom: 0;
         margin-top: 0;
         transition: transform 0.3s ease, box-shadow 0.3s ease;
-        border: 1px solid rgba(36, 54, 102, 0.1);
-        height: 100%;
+        border: 1px solid rgba(36, 54, 102, 0.08);
     }}
     
     .info-card:hover {{
@@ -495,52 +494,51 @@ def show_intro():
     
     st.markdown('<h2 style="text-align: center; margin-top: 2rem; margin-bottom: 1.5rem; color: #243666;">🎯 この診断について</h2>', unsafe_allow_html=True)
     
-    # HTMLで直接2カラムレイアウトを実装
+    # HTMLで直接2カラムレイアウトを実装（カードを簡潔に）
     st.markdown(f"""
-    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; margin-top: 0;">
-        <div>
+    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-top: 0; margin-bottom: 1rem;">
+        <div style="display: flex; flex-direction: column; gap: 1rem;">
             <div class="info-card">
-                <h3 style="margin-top: 0;">📋 診断内容</h3>
-                <p>事業推進力を<strong>6つの軸</strong>で診断します</p>
-                <p><strong>所要時間</strong>: 約15分<br>
-                <strong>設問数</strong>: 全36問<br>
-                <strong>結果</strong>: その場で確認可能</p>
+                <h3 style="margin-top: 0; margin-bottom: 0.6rem; font-size: 1.1rem;">📋 診断内容</h3>
+                <p style="margin: 0; line-height: 1.5; font-size: 0.95rem;">事業推進力を<strong>6つの軸</strong>で診断<br>
+                <strong>所要時間</strong>: 約15分・<strong>全36問</strong></p>
             </div>
             <div class="info-card">
-                <h3 style="margin-top: 0;">📊 わかること</h3>
-                <ul style="margin: 0; padding-left: 1.5rem;">
+                <h3 style="margin-top: 0; margin-bottom: 0.6rem; font-size: 1.1rem;">📊 わかること</h3>
+                <ul style="margin: 0; padding-left: 1.3rem; line-height: 1.6; font-size: 0.95rem;">
                     <li>総合スコアとランク評価</li>
-                    <li>6軸のバランス（レーダーチャート）</li>
+                    <li>6軸バランス（レーダーチャート）</li>
                     <li>具体的な改善ポイント</li>
-                    <li>優先的に取り組むべき課題</li>
                 </ul>
             </div>
         </div>
-        <div>
+        <div style="display: flex; flex-direction: column; gap: 1rem;">
             <div class="info-card">
-                <h3 style="margin-top: 0;">🔍 6つの診断軸</h3>
-                <p>🎯 <strong>経営ビジョンの明確さ</strong> (6問)<br>
-                📋 <strong>事業計画の実行管理</strong> (7問)<br>
-                👥 <strong>組織体制の強さ</strong> (6問)<br>
-                ⏰ <strong>経営者の時間の使い方</strong> (6問)<br>
-                📊 <strong>数値管理の仕組み</strong> (6問)<br>
-                💰 <strong>収益性の健全度</strong> (6問)</p>
+                <h3 style="margin-top: 0; margin-bottom: 0.6rem; font-size: 1.1rem;">🔍 6つの診断軸</h3>
+                <p style="margin: 0; line-height: 1.5; font-size: 0.88rem;">
+                🎯 経営ビジョンの明確さ (6問)<br>
+                📋 事業計画の実行管理 (7問)<br>
+                👥 組織体制の強さ (6問)<br>
+                ⏰ 経営者の時間の使い方 (6問)<br>
+                📊 数値管理の仕組み (6問)<br>
+                💰 収益性の健全度 (6問)</p>
             </div>
             <div class="info-card">
-                <h3 style="margin-top: 0;">✅ 回答方法</h3>
-                <p>各設問に対して、現状を最も表している選択肢を選んでください</p>
-                <ul style="margin: 0; padding-left: 1.5rem;">
-                    <li><strong>非常に当てはまる</strong></li>
-                    <li><strong>やや当てはまる</strong></li>
-                    <li><strong>あまり当てはまらない</strong></li>
-                    <li><strong>全く当てはまらない</strong></li>
+                <h3 style="margin-top: 0; margin-bottom: 0.6rem; font-size: 1.1rem;">✅ 回答方法</h3>
+                <p style="margin: 0 0 0.4rem 0; font-size: 0.95rem;">各設問について現状を選択</p>
+                <ul style="margin: 0; padding-left: 1.3rem; line-height: 1.5; font-size: 0.88rem;">
+                    <li>非常に当てはまる</li>
+                    <li>やや当てはまる</li>
+                    <li>あまり当てはまらない</li>
+                    <li>全く当てはまらない</li>
                 </ul>
             </div>
         </div>
     </div>
     """, unsafe_allow_html=True)
     
-    st.markdown("<br>", unsafe_allow_html=True)
+    # ボタンを明確に分離（適切な余白を確保）
+    st.markdown('<div style="margin-top: 2rem; margin-bottom: 1rem;"></div>', unsafe_allow_html=True)
     
     if st.button("🚀 診断を始める", type="primary", use_container_width=True):
         st.session_state.page = 'questions'
@@ -671,12 +669,12 @@ def show_results():
     save_to_google_sheets(result_data)
     
     # ===== 総合評価セクション（HTML Grid 3カラム）=====
-    st.markdown('<h3 style="margin-top: 1.5rem; margin-bottom: 1rem;">🎯 総合評価</h3>', unsafe_allow_html=True)
+    st.markdown('<h3 style="margin-top: 1rem; margin-bottom: 0.8rem;">🎯 総合評価</h3>', unsafe_allow_html=True)
     
     st.markdown(f"""
-    <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 1.5rem; margin-top: 0;">
+    <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 1rem; margin-top: 0;">
         <!-- カラム1: ランクカード -->
-        <div style='text-align: center; padding: 2.5rem; background: linear-gradient(135deg, {rank_color} 0%, {rank_color}dd 100%); 
+        <div style='text-align: center; padding: 1.5rem; background: linear-gradient(135deg, {rank_color} 0%, {rank_color}dd 100%); 
                     color: white; border-radius: 20px; box-shadow: 0 8px 16px rgba(0,0,0,0.15);'>
             <div style='font-size: 4rem; margin-bottom: 0.5rem;'>{rank_icon}</div>
             <div style='font-size: 2.5rem; font-weight: 800; margin-bottom: 0.5rem;'>ランク {rank}</div>
@@ -709,7 +707,7 @@ def show_results():
     """, unsafe_allow_html=True)
     
     # ===== 6軸バランス分析セクション（HTML Grid 2カラム + st.pyplot()）=====
-    st.markdown('<h3 style="margin-top: 2.5rem; margin-bottom: 1rem;">📈 6軸バランス分析</h3>', unsafe_allow_html=True)
+    st.markdown('<h3 style="margin-top: 2rem; margin-bottom: 0.8rem;">📈 6軸バランス分析</h3>', unsafe_allow_html=True)
     
     # レーダーチャート生成
     labels = list(axis_scores.keys())
@@ -766,7 +764,7 @@ def show_results():
             bar_color = "#dc3545"
         
         axis_scores_html += f"""
-        <div style='background: {badge_color}; padding: 1rem; border-radius: 10px; margin-bottom: 1rem;'>
+        <div style='background: {badge_color}; padding: 0.8rem; border-radius: 8px; margin-bottom: 0.8rem;'>
             <div style='margin-bottom: 0.5rem;'>
                 <strong>{color} {icon} {axis_name}</strong>
             </div>
@@ -781,7 +779,7 @@ def show_results():
     
     # HTML Grid 2カラムレイアウト
     st.markdown(f"""
-    <div style="display: grid; grid-template-columns: 2fr 3fr; gap: 1.5rem; margin-top: 0;">
+    <div style="display: grid; grid-template-columns: 2fr 3fr; gap: 1rem; margin-top: 0;">
         <!-- 左側: レーダーチャート -->
         <div class="info-card">
             <img src="data:image/png;base64,{img_base64}" style="width: 100%; height: auto; border-radius: 8px;">
