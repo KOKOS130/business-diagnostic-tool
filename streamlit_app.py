@@ -669,34 +669,34 @@ def show_results():
     save_to_google_sheets(result_data)
     
     # ===== 総合評価セクション（HTML Grid 3カラム）=====
-    st.markdown('<h3 style="margin-top: 1rem; margin-bottom: 0.8rem;">🎯 総合評価</h3>', unsafe_allow_html=True)
+    st.markdown('<h3 style="margin-top: 0.5rem; margin-bottom: 0.5rem;">🎯 総合評価</h3>', unsafe_allow_html=True)
     
     st.markdown(f"""
     <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 1rem; margin-top: 0;">
         <!-- カラム1: ランクカード -->
-        <div style='text-align: center; padding: 1.5rem; background: linear-gradient(135deg, {rank_color} 0%, {rank_color}dd 100%); 
-                    color: white; border-radius: 20px; box-shadow: 0 8px 16px rgba(0,0,0,0.15);'>
-            <div style='font-size: 4rem; margin-bottom: 0.5rem;'>{rank_icon}</div>
-            <div style='font-size: 2.5rem; font-weight: 800; margin-bottom: 0.5rem;'>ランク {rank}</div>
-            <div style='font-size: 1.3rem; font-weight: 500;'>{rank_label}</div>
+        <div style='text-align: center; padding: 1.2rem; background: linear-gradient(135deg, {rank_color} 0%, {rank_color}dd 100%); 
+                    color: white; border-radius: 16px; box-shadow: 0 6px 12px rgba(0,0,0,0.12);'>
+            <div style='font-size: 3.5rem; margin-bottom: 0.3rem;'>{rank_icon}</div>
+            <div style='font-size: 2.2rem; font-weight: 800; margin-bottom: 0.3rem;'>ランク {rank}</div>
+            <div style='font-size: 1.1rem; font-weight: 500;'>{rank_label}</div>
         </div>
         
         <!-- カラム2: 総合スコア -->
         <div class="info-card">
             <div style="text-align: center;">
-                <div style="font-size: 0.9rem; color: #5a6c7d; margin-bottom: 0.5rem;">総合スコア</div>
-                <div style="font-size: 2rem; font-weight: 700; color: {ADAMS_NAVY}; margin-bottom: 1.5rem;">{total_score} / {max_total_score} 点</div>
+                <div style="font-size: 0.85rem; color: #5a6c7d; margin-bottom: 0.4rem;">総合スコア</div>
+                <div style="font-size: 1.8rem; font-weight: 700; color: {ADAMS_NAVY}; margin-bottom: 1rem;">{total_score} / {max_total_score} 点</div>
             </div>
             <div style="text-align: center;">
-                <div style="font-size: 0.9rem; color: #5a6c7d; margin-bottom: 0.5rem;">達成率</div>
-                <div style="font-size: 2rem; font-weight: 700; color: {ADAMS_NAVY};">{percentage:.1f}%</div>
+                <div style="font-size: 0.85rem; color: #5a6c7d; margin-bottom: 0.4rem;">達成率</div>
+                <div style="font-size: 1.8rem; font-weight: 700; color: {ADAMS_NAVY};">{percentage:.1f}%</div>
             </div>
         </div>
         
         <!-- カラム3: ランク基準 -->
         <div class="info-card">
-            <h4 style="margin: 0 0 1rem 0; color: {ADAMS_NAVY};">📋 ランク基準</h4>
-            <ul style="margin: 0; padding-left: 1.5rem; line-height: 1.8; font-size: 0.95rem;">
+            <h4 style="margin: 0 0 0.6rem 0; color: {ADAMS_NAVY}; font-size: 1rem;">📋 ランク基準</h4>
+            <ul style="margin: 0; padding-left: 1.2rem; line-height: 1.5; font-size: 0.88rem;">
                 <li><strong>A</strong>: 85%以上（優良レベル）</li>
                 <li><strong>B</strong>: 70-84%（標準レベル）</li>
                 <li><strong>C</strong>: 55-69%（要改善レベル）</li>
@@ -707,7 +707,7 @@ def show_results():
     """, unsafe_allow_html=True)
     
     # ===== 6軸バランス分析セクション（HTML Grid 2カラム + st.pyplot()）=====
-    st.markdown('<h3 style="margin-top: 2rem; margin-bottom: 0.8rem;">📈 6軸バランス分析</h3>', unsafe_allow_html=True)
+    st.markdown('<h3 style="margin-top: 1.2rem; margin-bottom: 0.5rem;">📈 6軸バランス分析</h3>', unsafe_allow_html=True)
     
     # レーダーチャート生成
     labels = list(axis_scores.keys())
@@ -783,7 +783,7 @@ def show_results():
         <!-- 左側: レーダーチャート -->
         <div class="info-card">
             <img src="data:image/png;base64,{img_base64}" style="width: 100%; height: auto; border-radius: 8px;">
-            <div style="margin-top: 1rem; padding: 0.8rem; background: #f8f9fa; border-radius: 8px; font-size: 0.85rem; line-height: 1.6;">
+            <div style="margin-top: 0.8rem; padding: 0.6rem; background: #f8f9fa; border-radius: 6px; font-size: 0.8rem; line-height: 1.4;">
                 <strong>凡例</strong>:<br>
                 Vision = 経営ビジョンの明確さ<br>
                 Planning = 事業計画の実行管理<br>
@@ -796,14 +796,14 @@ def show_results():
         
         <!-- 右側: 各軸スコア -->
         <div class="info-card">
-            <h4 style="margin: 0 0 1rem 0; color: {ADAMS_NAVY};">📊 各軸スコア</h4>
+            <h4 style="margin: 0 0 0.6rem 0; color: {ADAMS_NAVY}; font-size: 1rem;">📊 各軸スコア</h4>
             {axis_scores_html}
         </div>
     </div>
     """, unsafe_allow_html=True)
     
     # ===== 優先改善課題 TOP3 =====
-    st.write("### 🎯 優先改善課題 TOP3")
+    st.markdown('<h3 style="margin-top: 1.2rem; margin-bottom: 0.5rem;">🎯 優先改善課題 TOP3</h3>', unsafe_allow_html=True)
     
     sorted_axes = sorted(axis_scores.items(), key=lambda x: x[1] / axis_max_scores[x[0]] if axis_max_scores[x[0]] > 0 else 0)
     
@@ -824,18 +824,18 @@ def show_results():
         themes = diagnostic_data[axis_name]["improvement_themes"][level]
         
         st.markdown(f"""
-        <div class="info-card">
-            <h4 style="margin-top: 0;">{medals[i]} 第{i+1}位: {icon} {axis_name}</h4>
-            <p><strong>現在のスコア</strong>: {score}/{max_score} 点 ({pct:.1f}%)</p>
-            <p><strong>取り組むと良いテーマ（ヒント）</strong>:</p>
-            <ul style="margin: 0; padding-left: 1.5rem; line-height: 1.8;">
+        <div class="info-card" style="margin-bottom: 0.8rem;">
+            <h4 style="margin: 0 0 0.5rem 0; font-size: 1rem;">{medals[i]} 第{i+1}位: {icon} {axis_name}</h4>
+            <p style="margin: 0 0 0.4rem 0; font-size: 0.95rem;"><strong>現在のスコア</strong>: {score}/{max_score} 点 ({pct:.1f}%)</p>
+            <p style="margin: 0 0 0.3rem 0; font-size: 0.95rem;"><strong>取り組むと良いテーマ（ヒント）</strong>:</p>
+            <ul style="margin: 0; padding-left: 1.2rem; line-height: 1.5; font-size: 0.88rem;">
                 {''.join([f"<li>{theme}</li>" for theme in themes])}
             </ul>
         </div>
         """, unsafe_allow_html=True)
     
     # ===== 総合診断コメント =====
-    st.write("### 💬 総合診断コメント")
+    st.markdown('<h3 style="margin-top: 1.2rem; margin-bottom: 0.5rem;">💬 総合診断コメント</h3>', unsafe_allow_html=True)
     
     if percentage >= 85:
         comment = "🎉 **素晴らしい！** 事業推進力が非常に高い状態です。現状を維持しつつ、さらなる成長に向けた新たな挑戦を検討してください。"
@@ -849,7 +849,7 @@ def show_results():
     st.info(comment)
     
     # ===== アクションボタン =====
-    st.markdown('<div class="no-print" style="margin-top: 2rem;">', unsafe_allow_html=True)
+    st.markdown('<div class="no-print" style="margin-top: 1.5rem;">', unsafe_allow_html=True)
     
     # PDFダウンロードボタン用のデータ準備
     pdf_buffer = generate_pdf_report(axis_scores, axis_max_scores, total_score, 
@@ -885,7 +885,7 @@ def show_results():
     st.markdown('</div>', unsafe_allow_html=True)  # no-print終了
     
     # もう一度診断するボタン
-    st.markdown('<div class="no-print" style="margin-top: 1rem;">', unsafe_allow_html=True)
+    st.markdown('<div class="no-print" style="margin-top: 0.8rem;">', unsafe_allow_html=True)
     if st.button("🔄 もう一度診断する", use_container_width=True):
         st.session_state.scores = {}
         st.session_state.page = 'intro'
