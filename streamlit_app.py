@@ -808,8 +808,8 @@ def generate_pdf_report(axis_scores, axis_max_scores, total_score, max_total_sco
 
 def show_intro():
     """イントロページ"""
-    # ロゴコンテナ（左寄せ）
-    st.markdown('<div class="logo-container">', unsafe_allow_html=True)
+    # ロゴコンテナ（左寄せ） - 上部余白を完全排除
+    st.markdown('<div class="logo-container" style="margin-top: 0; padding-top: 0;">', unsafe_allow_html=True)
     try:
         st.image("https://raw.githubusercontent.com/KOKOS130/business-diagnostic-tool/main/adams_logo.png", width=140)
     except:
@@ -899,7 +899,7 @@ def show_intro():
 def show_questions():
     """質問ページ"""
     # ロゴ（小サイズ、左寄せ）
-    st.markdown('<div class="logo-container">', unsafe_allow_html=True)
+    st.markdown('<div class="logo-container" style="margin-top: 0; padding-top: 0;">', unsafe_allow_html=True)
     try:
         st.image("https://raw.githubusercontent.com/KOKOS130/business-diagnostic-tool/main/adams_logo.png", width=100)
     except:
@@ -994,7 +994,7 @@ def get_rank(percentage):
 def show_results():
     """結果ページ"""
     # ロゴ（小サイズ、左寄せ）
-    st.markdown('<div class="logo-container">', unsafe_allow_html=True)
+    st.markdown('<div class="logo-container" style="margin-top: 0; padding-top: 0;">', unsafe_allow_html=True)
     try:
         st.image("https://raw.githubusercontent.com/KOKOS130/business-diagnostic-tool/main/adams_logo.png", width=100)
     except:
@@ -1023,8 +1023,8 @@ def show_results():
     # 結果を保存
     save_to_google_sheets(result_data)
     
-    # 総合スコア表示
-    st.markdown('<h3 style="margin-bottom: 1rem;">🎯 総合評価</h3>', unsafe_allow_html=True)
+    # 総合スコア表示（上部余白を完全に削除）
+    st.markdown('<h3 style="margin-top: 0; margin-bottom: 1rem; padding-top: 0;">🎯 総合評価</h3>', unsafe_allow_html=True)
     
     st.markdown(f"""
     <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 1.5rem; margin-top: 0;">
@@ -1058,6 +1058,12 @@ def show_results():
     # レーダーチャートと詳細スコア
     st.markdown('<h3 style="margin-top: 2rem; margin-bottom: 1rem;">📈 6軸バランス分析</h3>', unsafe_allow_html=True)
     
+    # HTMLでコンテナを開始
+    st.markdown('<div style="display: grid; grid-template-columns: 2fr 3fr; gap: 1.5rem; margin-top: 0;">', unsafe_allow_html=True)
+    
+    # 左側: レーダーチャート
+    st.markdown('<div class="info-card">', unsafe_allow_html=True)
+    
     # レーダーチャート生成
     labels = list(axis_scores.keys())
     scores = [axis_scores[label] / axis_max_scores[label] * 4 for label in labels]
@@ -1085,17 +1091,29 @@ def show_results():
     ax.set_facecolor('#f8f9fa')
     fig.patch.set_facecolor('white')
     
-    # チャートをバッファに保存
-    from io import BytesIO
-    import base64
-    buf = BytesIO()
-    fig.savefig(buf, format='png', bbox_inches='tight', dpi=150)
-    buf.seek(0)
-    img_base64 = base64.b64encode(buf.read()).decode()
+    # Streamlitでチャートを表示
+    st.pyplot(fig)
     plt.close()
     
-    # 各軸スコアのHTML生成
-    axis_scores_html = ""
+    # 凡例
+    st.markdown("""
+    <div style="margin-top: 1rem; padding: 0.8rem; background: #f8f9fa; border-radius: 8px; font-size: 0.85rem; line-height: 1.6;">
+        <strong>凡例</strong>:<br>
+        Vision = 経営ビジョンの明確さ<br>
+        Planning = 事業計画の実行管理<br>
+        Organization = 組織体制の強さ<br>
+        Time Mgmt = 経営者の時間の使い方<br>
+        KPI = 数値管理の仕組み<br>
+        Profitability = 収益性の健全度
+    </div>
+    """, unsafe_allow_html=True)
+    
+    st.markdown('</div>', unsafe_allow_html=True)
+    
+    # 右側: 各軸スコア
+    st.markdown('<div class="info-card">', unsafe_allow_html=True)
+    st.markdown(f'<h4 style="margin: 0 0 1rem 0; color: {ADAMS_NAVY};">📊 各軸スコア</h4>', unsafe_allow_html=True)
+    
     for idx, (axis_name, score) in enumerate(axis_scores.items(), 1):
         icon = diagnostic_data[axis_name].get('icon', '📌')
         max_score = axis_max_scores[axis_name]
@@ -1111,7 +1129,7 @@ def show_results():
             color = "🔴"
             badge_color = "#f8d7da"
         
-        axis_scores_html += f"""
+        st.markdown(f"""
         <div style='background: {badge_color}; padding: 0.8rem; border-radius: 10px; margin-bottom: 0.8rem;'>
             <strong>{color} {icon} {axis_name}</strong><br>
             <span style='font-size: 1.1rem;'>{score} / {max_score} 点 ({pct:.1f}%)</span>
@@ -1119,29 +1137,12 @@ def show_results():
                 <div style='width: {pct}%; background: {ADAMS_NAVY}; height: 100%; border-radius: 10px;'></div>
             </div>
         </div>
-        """
+        """, unsafe_allow_html=True)
     
-    # HTML Grid レイアウト（2カラム: レーダーチャート + 各軸スコア）
-    st.markdown(f"""
-    <div style="display: grid; grid-template-columns: 2fr 3fr; gap: 1.5rem; margin-top: 0;">
-        <div class="info-card">
-            <img src="data:image/png;base64,{img_base64}" style="width: 100%; height: auto;">
-            <div style="margin-top: 1rem; padding: 0.8rem; background: #f8f9fa; border-radius: 8px; font-size: 0.85rem; line-height: 1.6;">
-                <strong>凡例</strong>:<br>
-                Vision = 経営ビジョンの明確さ<br>
-                Planning = 事業計画の実行管理<br>
-                Organization = 組織体制の強さ<br>
-                Time Mgmt = 経営者の時間の使い方<br>
-                KPI = 数値管理の仕組み<br>
-                Profitability = 収益性の健全度
-            </div>
-        </div>
-        <div class="info-card">
-            <h4 style="margin: 0 0 1rem 0; color: {ADAMS_NAVY};">📊 各軸スコア</h4>
-            {axis_scores_html}
-        </div>
-    </div>
-    """, unsafe_allow_html=True)
+    st.markdown('</div>', unsafe_allow_html=True)
+    
+    # コンテナを閉じる
+    st.markdown('</div>', unsafe_allow_html=True)
 
     # 優先改善課題
     st.write("### 🎯 優先改善課題 TOP3")
