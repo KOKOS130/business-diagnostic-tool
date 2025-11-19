@@ -699,22 +699,6 @@ def show_results():
     # ===== アクションボタン =====
     st.write("---")
     
-    col1, col2 = st.columns(2)
-    
-    with col1:
-        if st.button("🖨️ 印刷する", use_container_width=True):
-            st.markdown("""
-            <script>
-            setTimeout(function() {
-                window.print();
-            }, 100);
-            </script>
-            """, unsafe_allow_html=True)
-    
-    with col2:
-        # PDFダウンロードボタン（簡易版）
-        st.write("📄 PDF機能は印刷機能をご利用ください")
-    
     if st.button("🔄 もう一度診断する", use_container_width=True):
         st.session_state.scores = {}
         st.session_state.page = 'intro'
