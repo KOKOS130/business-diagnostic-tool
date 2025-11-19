@@ -15,7 +15,7 @@ ADAMS_LIGHT_NAVY = "#3d5a8f"
 ADAMS_ACCENT = "#4a90e2"
 ADAMS_GOLD = "#d4af37"
 
-# カスタムCSS - モダンでおしゃれなデザイン
+# カスタムCSS - 白いブロック完全排除版
 st.markdown(f"""
 <style>
     /* 全体の背景にグラデーション */
@@ -36,11 +36,44 @@ st.markdown(f"""
         }}
     }}
     
-    /* メインコンテンツエリア */
+    /* メインコンテンツエリア - 上部余白を完全削除 */
     .main .block-container {{
-        padding-top: 2rem;
+        padding-top: 0 !important;
         padding-bottom: 2rem;
         max-width: 1200px;
+        margin-top: 0 !important;
+    }}
+    
+    /* すべてのStreamlit要素の余白を削除 */
+    .main .block-container > div:first-child {{
+        margin-top: 0 !important;
+        padding-top: 0 !important;
+    }}
+    
+    /* Streamlitのデフォルト余白を完全削除 */
+    [data-testid="column"] {{
+        padding-top: 0 !important;
+        margin-top: 0 !important;
+    }}
+    
+    [data-testid="column"] > div {{
+        padding-top: 0 !important;
+        margin-top: 0 !important;
+    }}
+    
+    div[data-testid="stVerticalBlock"] {{
+        padding-top: 0 !important;
+        margin-top: 0 !important;
+        gap: 0 !important;
+    }}
+    
+    div[data-testid="stVerticalBlock"] > div {{
+        padding-top: 0 !important;
+        margin-top: 0 !important;
+    }}
+    
+    .element-container {{
+        margin-top: 0 !important;
     }}
     
     /* ヘッダースタイル */
@@ -53,6 +86,7 @@ st.markdown(f"""
         background-clip: text;
         text-align: center;
         margin-bottom: 0.5rem;
+        margin-top: 1rem;
         letter-spacing: -0.5px;
     }}
     
@@ -61,26 +95,8 @@ st.markdown(f"""
         text-align: center;
         color: #5a6c7d;
         margin-bottom: 2rem;
+        margin-top: 0;
         font-weight: 400;
-    }}
-    
-    /* Streamlitカラムの上部余白を完全に削除 */
-    [data-testid="column"] {{
-        padding-top: 0 !important;
-        margin-top: 0 !important;
-    }}
-    
-    [data-testid="column"] > div {{
-        padding-top: 0 !important;
-        margin-top: 0 !important;
-    }}
-    
-    div[data-testid="stVerticalBlock"] > div {{
-        padding-top: 0 !important;
-    }}
-    
-    .element-container {{
-        margin-top: 0 !important;
     }}
     
     /* カードスタイル */
@@ -89,10 +105,11 @@ st.markdown(f"""
         border-radius: 16px;
         padding: 2rem;
         box-shadow: 0 4px 6px rgba(0, 0, 0, 0.07), 0 2px 4px rgba(0, 0, 0, 0.05);
-        margin-bottom: 1.5rem;
+        margin-bottom: 0;
         margin-top: 0;
         transition: transform 0.3s ease, box-shadow 0.3s ease;
         border: 1px solid rgba(36, 54, 102, 0.1);
+        height: 100%;
     }}
     
     .info-card:hover {{
@@ -105,10 +122,6 @@ st.markdown(f"""
         text-align: center;
     }}
     
-    .center-content h2, .center-content h3 {{
-        text-align: center;
-    }}
-    
     /* ボタンスタイル */
     .stButton>button {{
         background: linear-gradient(135deg, {ADAMS_NAVY} 0%, {ADAMS_LIGHT_NAVY} 100%);
@@ -116,240 +129,100 @@ st.markdown(f"""
         border: none;
         border-radius: 12px;
         height: 3.5rem !important;
-        min-height: 3.5rem !important;
-        max-height: 3.5rem !important;
-        padding: 0.75rem 2rem !important;
-        font-size: 1.05rem !important;
-        font-weight: 600 !important;
-        display: flex !important;
-        align-items: center !important;
-        justify-content: center !important;
-        line-height: 1.5 !important;
-        transition: all 0.3s ease !important;
+        font-weight: 600;
+        font-size: 1.1rem;
+        transition: all 0.3s ease;
         box-shadow: 0 4px 12px rgba(36, 54, 102, 0.3);
     }}
     
     .stButton>button:hover {{
-        background: linear-gradient(135deg, {ADAMS_LIGHT_NAVY} 0%, {ADAMS_ACCENT} 100%);
         transform: translateY(-2px);
         box-shadow: 0 6px 20px rgba(36, 54, 102, 0.4);
     }}
     
-    .stDownloadButton>button {{
-        background: linear-gradient(135deg, {ADAMS_NAVY} 0%, {ADAMS_LIGHT_NAVY} 100%);
-        color: white;
-        border: none;
-        border-radius: 12px;
-        height: 3.5rem !important;
-        min-height: 3.5rem !important;
-        max-height: 3.5rem !important;
-        padding: 0.75rem 2rem !important;
-        font-size: 1.05rem !important;
-        font-weight: 600 !important;
-        display: flex !important;
-        align-items: center !important;
-        justify-content: center !important;
-        line-height: 1.5 !important;
-        transition: all 0.3s ease !important;
-        box-shadow: 0 4px 12px rgba(36, 54, 102, 0.3);
-    }}
-    
-    .stDownloadButton>button:hover {{
-        background: linear-gradient(135deg, {ADAMS_LIGHT_NAVY} 0%, {ADAMS_ACCENT} 100%);
-        transform: translateY(-2px);
-        box-shadow: 0 6px 20px rgba(36, 54, 102, 0.4);
-    }}
-    
-    /* プログレスバー */
-    .stProgress > div > div > div > div {{
-        background: linear-gradient(90deg, {ADAMS_NAVY} 0%, {ADAMS_ACCENT} 100%);
-        border-radius: 10px;
-    }}
-    
-    /* ラジオボタン */
-    .stRadio > div {{
-        background: transparent;
-        padding: 0;
-        margin-top: 0.5rem;
-    }}
-    
-    /* 質問カード内のラジオボタン */
-    .question-card .stRadio {{
-        margin-top: 0 !important;
-        padding-top: 0 !important;
-    }}
-    
-    .question-card .stRadio > div {{
-        padding: 0 !important;
-        margin: 0 !important;
-    }}
-    
-    /* メトリックカード */
-    div[data-testid="stMetricValue"] {{
-        font-size: 2rem;
-        font-weight: 700;
-        color: {ADAMS_NAVY};
-    }}
-    
-    div[data-testid="stMetricLabel"] {{
-        font-size: 1rem;
-        color: #5a6c7d;
-        font-weight: 500;
-    }}
-    
-    /* エクスパンダー */
-    .streamlit-expanderHeader {{
-        background: white;
-        border-radius: 12px;
-        font-weight: 600;
-        color: {ADAMS_NAVY};
-        padding: 1rem;
-        border: 1px solid rgba(36, 54, 102, 0.1);
-    }}
-    
-    .streamlit-expanderHeader:hover {{
-        background: #f8f9fa;
-        border-color: {ADAMS_NAVY};
-    }}
-    
-    /* フッター */
-    .adams-footer {{
-        background: linear-gradient(135deg, {ADAMS_NAVY} 0%, {ADAMS_LIGHT_NAVY} 100%);
-        color: white;
-        text-align: center;
-        font-size: 0.95rem;
-        margin-top: 3rem;
-        padding: 2rem;
-        border-radius: 16px;
-        box-shadow: 0 4px 12px rgba(36, 54, 102, 0.2);
-    }}
-    
-    .copyright-notice {{
-        text-align: center;
-        color: #8090a0;
-        font-size: 0.85rem;
-        margin-top: 1.5rem;
-        padding: 1rem;
-        background: white;
-        border-radius: 12px;
-        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
-    }}
-    
-    /* インフォボックス */
-    .stInfo {{
-        background: linear-gradient(135deg, #e3f2fd 0%, #bbdefb 100%);
-        border-left: 4px solid {ADAMS_ACCENT};
-        border-radius: 12px;
-        padding: 1rem;
-    }}
-    
-    .stSuccess {{
-        background: linear-gradient(135deg, #e8f5e9 0%, #c8e6c9 100%);
-        border-left: 4px solid #4caf50;
-        border-radius: 12px;
-    }}
-    
-    .stWarning {{
-        background: linear-gradient(135deg, #fff3e0 0%, #ffe0b2 100%);
-        border-left: 4px solid #ff9800;
-        border-radius: 12px;
-    }}
-    
-    .stError {{
-        background: linear-gradient(135deg, #ffebee 0%, #ffcdd2 100%);
-        border-left: 4px solid #f44336;
-        border-radius: 12px;
-    }}
-    
-    /* ランクバッジ */
-    .rank-badge {{
-        display: inline-block;
-        padding: 0.5rem 1.5rem;
-        border-radius: 50px;
-        font-weight: 700;
-        font-size: 1.2rem;
-        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-        animation: pulse 2s infinite;
-    }}
-    
-    @keyframes pulse {{
-        0%, 100% {{
-            transform: scale(1);
-        }}
-        50% {{
-            transform: scale(1.05);
-        }}
-    }}
-    
-    /* 質問カード */
+    /* 質問カードスタイル */
     .question-card {{
         background: white;
+        border-left: 4px solid {ADAMS_ACCENT};
         border-radius: 12px;
         padding: 1.5rem;
-        margin-bottom: 1rem;
-        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
-        border-left: 4px solid {ADAMS_NAVY};
+        margin-bottom: 1.5rem;
+        margin-top: 0;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
         transition: all 0.3s ease;
     }}
     
     .question-card:hover {{
-        box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
+        box-shadow: 0 4px 16px rgba(0, 0, 0, 0.12);
         transform: translateX(4px);
     }}
     
-    .print-only {{
-        display: none;
+    /* ロゴコンテナ - 余白完全削除 */
+    .logo-container {{
+        text-align: left;
+        margin: 0;
+        padding: 0.5rem 0;
     }}
     
-    /* ロゴコンテナ */
-    .logo-container {{
-        background: white;
+    /* プログレスバー */
+    .stProgress > div > div > div {{
+        background: linear-gradient(90deg, {ADAMS_NAVY} 0%, {ADAMS_ACCENT} 100%);
+    }}
+    
+    /* 著作権表示 */
+    .copyright {{
+        text-align: center;
+        color: #5a6c7d;
+        font-size: 0.85rem;
+        margin-top: 2rem;
         padding: 1rem;
-        border-radius: 12px;
-        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
-        display: inline-block;
-        margin-bottom: 1.5rem;
+        border-top: 1px solid rgba(36, 54, 102, 0.1);
+    }}
+    
+    /* 印刷時非表示 */
+    .no-print {{
+        display: block;
+    }}
+    
+    @media print {{
+        .no-print {{
+            display: none !important;
+        }}
     }}
 </style>
 """, unsafe_allow_html=True)
 
-# セッション状態の初期化
-if 'page' not in st.session_state:
-    st.session_state.page = 'intro'
-if 'scores' not in st.session_state:
-    st.session_state.scores = {}
-
-# 診断データ構造（英語ラベル追加）
+# 診断データ（6軸36問）
 diagnostic_data = {
     "経営ビジョンの明確さ": {
         "english_label": "Vision",
         "icon": "🎯",
         "questions": [
-            "将来のビジョン（3年後にどうなりたいか）を、社員や取引先に明確に説明できますか？",
-            "自社の「強み」と「弱み」をそれぞれ3つ以上、すぐに答えることができますか？",
-            "会社の経営方針や戦略を、文書やデータとして記録していますか？",
-            "日々の経営判断をする際に、明確な判断基準や優先順位がありますか？",
-            "幹部社員や管理職は、あなたの経営方針をしっかり理解していますか？",
-            "重要な経営判断について、他の人に筋道立てて説明することができますか？"
+            "経営理念やビジョン（将来のあるべき姿）が明文化されていますか？",
+            "経営理念やビジョンは、社員全員が理解し、共感できる内容ですか？",
+            "経営理念やビジョンを、定期的に社員に伝え、浸透させる機会がありますか？",
+            "3〜5年後の具体的な事業目標（売上、利益、顧客数など）を設定していますか？",
+            "自社の強み（他社にない独自の価値）を明確に把握していますか？",
+            "お客様から「この会社でなければならない」と選ばれる理由がありますか？"
         ],
         "improvement_themes": {
             "high": [
-                "✓ ビジョンの定期的な見直しと進化",
-                "✓ より具体的な中長期目標の設定",
-                "✓ ビジョンの社外への発信強化"
+                "✓ ビジョンの更なる具体化と進化",
+                "✓ 社会的価値の創造と発信",
+                "✓ ブランド力の強化"
             ],
             "medium": [
-                "✓ ビジョンの言語化と可視化",
-                "✓ 経営層から現場への伝達方法の改善",
-                "✓ ビジョンと日常業務のつながりの明確化",
-                "✓ 社員の理解度を測る仕組みづくり"
+                "✓ 理念の定期的な見直しと更新",
+                "✓ 社員への浸透活動の強化",
+                "✓ 中長期目標の明確化",
+                "✓ 独自の強みの言語化"
             ],
             "low": [
-                "✓ 経営ビジョンの策定と明文化",
-                "✓ 自社の強み・弱みの棚卸し",
-                "✓ 経営判断の基準づくり",
-                "✓ 経営方針の社内共有の仕組みづくり",
-                "✓ 幹部層との認識合わせ"
+                "✓ 経営理念・ビジョンの策定",
+                "✓ 社員との対話機会の創出",
+                "✓ 3〜5年後の目標設定",
+                "✓ 自社の強みの棚卸し",
+                "✓ 顧客価値の明確化"
             ]
         }
     },
@@ -357,32 +230,32 @@ diagnostic_data = {
         "english_label": "Planning",
         "icon": "📋",
         "questions": [
-            "今年度の事業計画書（売上目標、利益目標など）を作成していますか？",
-            "事業計画の進捗状況を、定期的（週次または月次）にチェックしていますか？",
-            "昨年立てた計画に対して、80%以上達成できましたか？",
-            "計画と実績にズレが生じた時、その原因を分析していますか？",
-            "計画が未達成の場合、修正や改善のアクションをすぐに実行していますか？",
-            "全社員が、今年度の会社の目標数値（売上・利益など）を知っていますか？",
-            "3ヶ月ごとに、目標達成のための具体的な行動計画がありますか？"
+            "年間の事業計画（売上計画・利益計画）を作成していますか？",
+            "事業計画を達成するための具体的な行動計画がありますか？",
+            "計画の進捗状況を、月次または週次で確認していますか？",
+            "計画と実績の差異（ギャップ）が生じた際、原因分析を行っていますか？",
+            "計画が未達の場合、改善策を立て、すぐに行動していますか？",
+            "年度末には計画の振り返りを行い、次年度の計画に活かしていますか？",
+            "社員に対して、会社の計画や目標を明確に伝えていますか？"
         ],
         "improvement_themes": {
             "high": [
                 "✓ 計画精度のさらなる向上",
-                "✓ より高度なPDCAサイクルの実践",
-                "✓ 中長期計画との連動性強化"
+                "✓ PDCAサイクルの高速化",
+                "✓ データドリブン経営の推進"
             ],
             "medium": [
-                "✓ 進捗管理の頻度と精度の向上",
-                "✓ 計画未達時の原因分析の深掘り",
-                "✓ 修正アクションの実行スピード向上",
-                "✓ 全社員への目標浸透の仕組み"
+                "✓ 月次レビューの質の向上",
+                "✓ 差異分析の深掘り",
+                "✓ 改善策の実行スピード向上",
+                "✓ 社員への計画共有の強化"
             ],
             "low": [
-                "✓ 事業計画書の作成習慣の確立",
-                "✓ 定期的な進捗確認の仕組みづくり",
-                "✓ 実現可能な目標設定の方法",
-                "✓ 計画と実績の差異分析の基本",
-                "✓ 四半期単位の行動計画の策定"
+                "✓ 年間事業計画の策定",
+                "✓ 行動計画への落とし込み",
+                "✓ 進捗確認の仕組みづくり",
+                "✓ 計画と実績の比較習慣",
+                "✓ 振り返りと改善のサイクル確立"
             ]
         }
     },
@@ -390,12 +263,12 @@ diagnostic_data = {
         "english_label": "Organization",
         "icon": "👥",
         "questions": [
-            "あなたが1週間不在にしても、会社の業務は問題なく回りますか？",
-            "事業運営を任せられる「右腕」となる人材がいますか？",
-            "幹部社員や管理職に、適切に権限を委譲（任せる）ことができていますか？",
-            "社員が、上司の指示を待たずに自分で判断して行動できていますか？",
-            "業務のやり方が標準化され、マニュアルや手順書が整備されていますか？",
-            "定例会議で、報告だけでなく、実質的な意思決定ができていますか？"
+            "各社員の役割分担が明確で、誰が何を担当しているか把握できていますか？",
+            "社員が、経営者の指示を待たずに自律的に動ける組織ですか？",
+            "経営者が不在でも、現場の業務が滞りなく回る仕組みがありますか？",
+            "右腕となる「No.2人材」が育っていますか？",
+            "重要な意思決定や業務を、経営者以外にも任せられていますか？",
+            "定期的な会議やミーティングで、情報共有や意思決定が行われていますか？"
         ],
         "improvement_themes": {
             "high": [
@@ -497,26 +370,26 @@ diagnostic_data = {
             "high": [
                 "✓ 新規事業・新商品開発への投資",
                 "✓ 収益性のさらなる向上施策",
-                "✓ 財務体質の強化と成長投資"
+                "✓ 財務体質の強化"
             ],
             "medium": [
-                "✓ 営業利益率の改善策の実行",
-                "✓ 商品・サービス別の収益性分析",
-                "✓ キャッシュフロー管理の精度向上",
-                "✓ 不採算事業の見極めと改善"
+                "✓ 営業利益率の向上策",
+                "✓ 商品別収益性の分析",
+                "✓ キャッシュフロー管理の精緻化",
+                "✓ 固定費の最適化"
             ],
             "low": [
-                "✓ 売上成長のための基本戦略",
-                "✓ 利益率の現状把握と目標設定",
-                "✓ 粗利率の計算と商品別分析",
-                "✓ 月次でのキャッシュフロー確認",
-                "✓ 固定費の適正化と変動費化"
+                "✓ 売上成長戦略の策定",
+                "✓ 利益率の現状把握",
+                "✓ 粗利管理の開始",
+                "✓ 月次資金繰り表の作成",
+                "✓ 不採算事業の洗い出し"
             ]
         }
     }
 }
 
-# 選択肢（全軸共通）
+# 回答選択肢
 options = {
     4: "非常に当てはまる",
     3: "やや当てはまる",
@@ -524,291 +397,85 @@ options = {
     1: "全く当てはまらない"
 }
 
-def get_improvement_themes(axis_name, percentage):
-    """改善すべきテーマを取得"""
-    themes_data = diagnostic_data[axis_name].get("improvement_themes", {})
-    
-    if percentage >= 75:
-        return themes_data.get("high", [])
-    elif percentage >= 50:
-        return themes_data.get("medium", [])
-    else:
-        return themes_data.get("low", [])
+# セッションステートの初期化
+if 'scores' not in st.session_state:
+    st.session_state.scores = {}
+if 'page' not in st.session_state:
+    st.session_state.page = 'intro'
 
-def save_to_google_sheets(result_data):
-    """Googleスプレッドシートに結果を保存（将来実装）"""
-    try:
-        if 'saved_results' not in st.session_state:
-            st.session_state.saved_results = []
-        
-        st.session_state.saved_results.append(result_data)
-        return True
-    except Exception as e:
-        st.error(f"データ保存エラー: {str(e)}")
-        return False
-
-def create_radar_chart_for_pdf(axis_scores, axis_max_scores, labels):
-    """レーダーチャート作成（PDF用）"""
-    scores = [axis_scores[label] / axis_max_scores[label] * 4 for label in labels]
-    
-    angles = np.linspace(0, 2 * np.pi, len(labels), endpoint=False).tolist()
-    scores_plot = scores + scores[:1]
-    angles_plot = angles + angles[:1]
-    
-    fig, ax = plt.subplots(figsize=(6, 6), subplot_kw=dict(polar=True))
-    ax.plot(angles_plot, scores_plot, 'o-', linewidth=2.5, color=ADAMS_NAVY, markersize=8)
-    ax.fill(angles_plot, scores_plot, alpha=0.25, color=ADAMS_NAVY)
-    
-    # 英語ラベルを使用（文字化け対策）
-    english_labels = [diagnostic_data[label]["english_label"] for label in labels]
-    
-    ax.set_thetagrids(np.degrees(angles), english_labels, fontsize=12)
-    ax.set_ylim(0, 4)
-    ax.set_yticks([1, 2, 3, 4])
-    ax.set_yticklabels(['1', '2', '3', '4'], fontsize=10)
-    ax.grid(True, linewidth=0.8, alpha=0.6)
-    ax.set_facecolor('#ffffff')
-    fig.patch.set_facecolor('white')
-    
-    return fig
+def save_to_google_sheets(data):
+    """Google Sheetsに結果を保存（ダミー実装）"""
+    pass
 
 def generate_pdf_report(axis_scores, axis_max_scores, total_score, max_total_score, percentage, rank, rank_label):
-    """PDF診断レポート生成（改善版）"""
+    """PDF診断結果レポート生成"""
     from reportlab.lib.pagesizes import A4
-    from reportlab.lib import colors
-    from reportlab.platypus import SimpleDocTemplate, Table, TableStyle, Paragraph, Spacer, Image
-    from reportlab.lib.styles import getSampleStyleSheet, ParagraphStyle
-    from reportlab.lib.units import mm
+    from reportlab.pdfgen import canvas
     from reportlab.pdfbase import pdfmetrics
     from reportlab.pdfbase.ttfonts import TTFont
-    from reportlab.lib.enums import TA_CENTER, TA_LEFT
-    from reportlab.pdfbase.pdfmetrics import registerFontFamily
+    from reportlab.lib.units import mm
     
     buffer = BytesIO()
     
-    # 日本語フォント設定
-    font_name = 'Helvetica'
+    # フォント登録
     try:
-        import matplotlib.font_manager as fm
-        font_files = fm.findSystemFonts()
-        noto_fonts = {}
-        for font_file in font_files:
-            if 'NotoSansCJK' in font_file or 'NotoSans-' in font_file:
-                if 'Regular' in font_file or 'normal' in font_file.lower():
-                    noto_fonts['regular'] = font_file
-                elif 'Bold' in font_file or 'bold' in font_file.lower():
-                    noto_fonts['bold'] = font_file
-        
-        if 'regular' in noto_fonts:
-            pdfmetrics.registerFont(TTFont('Japanese', noto_fonts['regular']))
-            if 'bold' in noto_fonts:
-                pdfmetrics.registerFont(TTFont('Japanese-Bold', noto_fonts['bold']))
-                registerFontFamily('Japanese', normal='Japanese', bold='Japanese-Bold')
-            font_name = 'Japanese'
-    except Exception as e:
-        print(f"日本語フォント設定エラー: {e}")
+        pdfmetrics.registerFont(TTFont('NotoSans', '/usr/share/fonts/opentype/noto/NotoSansCJK-Regular.ttc', subfontIndex=0))
+        font_name = 'NotoSans'
+    except:
+        font_name = 'Helvetica'
     
-    # PDFドキュメント設定
-    doc = SimpleDocTemplate(
-        buffer,
-        pagesize=A4,
-        rightMargin=20*mm,
-        leftMargin=20*mm,
-        topMargin=20*mm,
-        bottomMargin=20*mm
-    )
+    c = canvas.Canvas(buffer, pagesize=A4)
+    width, height = A4
     
-    story = []
-    styles = getSampleStyleSheet()
+    # タイトル
+    c.setFont(font_name, 20)
+    c.drawString(50, height - 50, "ADAMS 事業推進力診断結果")
     
-    # カスタムスタイル定義
-    title_style = ParagraphStyle(
-        'Title',
-        parent=styles['Title'],
-        fontName=font_name,
-        fontSize=22,
-        textColor=colors.HexColor(ADAMS_NAVY),
-        alignment=TA_CENTER,
-        spaceAfter=10,
-        leading=28
-    )
-    
-    subtitle_style = ParagraphStyle(
-        'Subtitle',
-        parent=styles['Normal'],
-        fontName=font_name,
-        fontSize=10,
-        textColor=colors.grey,
-        alignment=TA_CENTER,
-        spaceAfter=20
-    )
-    
-    heading1_style = ParagraphStyle(
-        'Heading1',
-        parent=styles['Heading1'],
-        fontName=font_name,
-        fontSize=16,
-        textColor=colors.HexColor(ADAMS_NAVY),
-        spaceAfter=12,
-        spaceBefore=12
-    )
-    
-    heading2_style = ParagraphStyle(
-        'Heading2',
-        parent=styles['Heading2'],
-        fontName=font_name,
-        fontSize=13,
-        textColor=colors.HexColor(ADAMS_NAVY),
-        spaceAfter=8
-    )
-    
-    body_style = ParagraphStyle(
-        'Body',
-        parent=styles['Normal'],
-        fontName=font_name,
-        fontSize=10,
-        leading=16
-    )
-    
-    # タイトルページ
-    story.append(Spacer(1, 10*mm))
-    story.append(Paragraph('事業推進力診断レポート', title_style))
-    story.append(Paragraph('Business Promotion Diagnostic Report', subtitle_style))
-    story.append(Paragraph(f'診断日時: {datetime.now().strftime("%Y年%m月%d日 %H:%M")}', subtitle_style))
-    story.append(Spacer(1, 10*mm))
+    # 診断日時
+    c.setFont(font_name, 10)
+    c.drawString(50, height - 80, f"診断日時: {datetime.now().strftime('%Y年%m月%d日 %H:%M')}")
     
     # 総合評価
-    story.append(Paragraph('総合評価 / Overall Evaluation', heading1_style))
+    c.setFont(font_name, 14)
+    c.drawString(50, height - 120, f"総合スコア: {total_score} / {max_total_score} 点")
+    c.drawString(50, height - 140, f"達成率: {percentage:.1f}%")
+    c.drawString(50, height - 160, f"ランク: {rank} ({rank_label})")
     
-    eval_data = [
-        ['項目', '結果'],
-        ['ランク / Rank', f'{rank} ({rank_label})'],
-        ['総合スコア / Total Score', f'{total_score} / {max_total_score} 点'],
-        ['達成率 / Achievement Rate', f'{percentage:.1f}%']
-    ]
+    # 各軸スコア
+    c.setFont(font_name, 12)
+    y_position = height - 200
+    c.drawString(50, y_position, "【各軸スコア】")
+    y_position -= 20
     
-    eval_table = Table(eval_data, colWidths=[80*mm, 80*mm])
-    eval_table.setStyle(TableStyle([
-        ('FONT', (0, 0), (-1, -1), font_name, 10),
-        ('BACKGROUND', (0, 0), (-1, 0), colors.HexColor(ADAMS_NAVY)),
-        ('TEXTCOLOR', (0, 0), (-1, 0), colors.whitesmoke),
-        ('ALIGN', (0, 0), (-1, -1), 'LEFT'),
-        ('VALIGN', (0, 0), (-1, -1), 'MIDDLE'),
-        ('GRID', (0, 0), (-1, -1), 1, colors.black),
-        ('ROWBACKGROUNDS', (0, 1), (-1, -1), [colors.white, colors.lightgrey]),
-        ('PADDING', (0, 0), (-1, -1), 8)
-    ]))
-    story.append(eval_table)
-    story.append(Spacer(1, 10*mm))
-    
-    # レーダーチャート
-    story.append(Paragraph('6軸バランス分析 / 6-Axis Balance Analysis', heading1_style))
-    
-    labels = list(axis_scores.keys())
-    radar_fig = create_radar_chart_for_pdf(axis_scores, axis_max_scores, labels)
-    
-    img_buffer = BytesIO()
-    radar_fig.savefig(img_buffer, format='png', dpi=150, bbox_inches='tight', facecolor='white')
-    img_buffer.seek(0)
-    plt.close(radar_fig)
-    
-    chart_image = Image(img_buffer, width=120*mm, height=120*mm)
-    story.append(chart_image)
-    story.append(Spacer(1, 8*mm))
-    
-    # 凡例テーブル
-    story.append(Paragraph('軸の説明 / Legend', heading2_style))
-    legend_data = [['英語 / English', '日本語 / Japanese']]
-    for axis_name in axis_scores.keys():
-        english_label = diagnostic_data[axis_name]["english_label"]
-        legend_data.append([english_label, axis_name])
-    
-    legend_table = Table(legend_data, colWidths=[50*mm, 110*mm])
-    legend_table.setStyle(TableStyle([
-        ('FONT', (0, 0), (-1, -1), font_name, 9),
-        ('BACKGROUND', (0, 0), (-1, 0), colors.HexColor(ADAMS_NAVY)),
-        ('TEXTCOLOR', (0, 0), (-1, 0), colors.whitesmoke),
-        ('ALIGN', (0, 0), (-1, -1), 'LEFT'),
-        ('VALIGN', (0, 0), (-1, -1), 'MIDDLE'),
-        ('GRID', (0, 0), (-1, -1), 0.5, colors.grey),
-        ('PADDING', (0, 0), (-1, -1), 6)
-    ]))
-    story.append(legend_table)
-    story.append(Spacer(1, 10*mm))
-    
-    # 各軸の詳細スコア
-    story.append(Paragraph('各軸スコア詳細 / Detailed Scores by Axis', heading1_style))
-    
-    score_data = [['軸 / Axis', 'スコア / Score', '達成率 / Rate']]
+    c.setFont(font_name, 10)
     for axis_name, score in axis_scores.items():
         max_score = axis_max_scores[axis_name]
         pct = (score / max_score) * 100 if max_score > 0 else 0
-        english_label = diagnostic_data[axis_name]['english_label']
-        icon = diagnostic_data[axis_name].get('icon', '')
-        score_data.append([
-            f'{icon} {axis_name} / {english_label}',
-            f'{score} / {max_score}',
-            f'{pct:.1f}%'
-        ])
+        c.drawString(50, y_position, f"{axis_name}: {score}/{max_score} 点 ({pct:.1f}%)")
+        y_position -= 20
     
-    score_table = Table(score_data, colWidths=[90*mm, 35*mm, 35*mm])
-    score_table.setStyle(TableStyle([
-        ('FONT', (0, 0), (-1, -1), font_name, 10),
-        ('BACKGROUND', (0, 0), (-1, 0), colors.HexColor(ADAMS_NAVY)),
-        ('TEXTCOLOR', (0, 0), (-1, 0), colors.whitesmoke),
-        ('ALIGN', (0, 0), (0, -1), 'LEFT'),
-        ('ALIGN', (1, 0), (-1, -1), 'CENTER'),
-        ('VALIGN', (0, 0), (-1, -1), 'MIDDLE'),
-        ('GRID', (0, 0), (-1, -1), 1, colors.black),
-        ('ROWBACKGROUNDS', (0, 1), (-1, -1), [colors.white, colors.lightgrey]),
-        ('PADDING', (0, 0), (-1, -1), 8)
-    ]))
-    story.append(score_table)
-    story.append(Spacer(1, 10*mm))
+    # 著作権表示
+    c.setFont(font_name, 8)
+    c.drawString(50, 30, "© 株式会社ADAMS Management Consulting Office - 無断転用を禁じます")
     
-    # 改善すべきテーマ（優先順位TOP3）
-    story.append(Paragraph('優先改善テーマ / Priority Improvement Themes', heading1_style))
-    
-    sorted_axes = sorted(axis_scores.items(), key=lambda x: x[1] / axis_max_scores[x[0]] if axis_max_scores[x[0]] > 0 else 0)
-    
-    for idx, (axis_name, score) in enumerate(sorted_axes[:3], 1):
-        max_score = axis_max_scores[axis_name]
-        pct = (score / max_score) * 100 if max_score > 0 else 0
-        icon = diagnostic_data[axis_name].get('icon', '')
-        
-        story.append(Paragraph(f'{idx}. {icon} {axis_name} ({pct:.1f}%)', heading2_style))
-        
-        themes = get_improvement_themes(axis_name, pct)
-        themes_text = '<br/>'.join(themes)
-        story.append(Paragraph(themes_text, body_style))
-        story.append(Spacer(1, 5*mm))
-    
-    story.append(Spacer(1, 5*mm))
-    
-    # フッター
-    footer_style = ParagraphStyle(
-        'Footer',
-        parent=styles['Normal'],
-        fontName=font_name,
-        fontSize=8,
-        textColor=colors.grey,
-        alignment=TA_CENTER
-    )
-    
-    story.append(Spacer(1, 10*mm))
-    story.append(Paragraph('詳しい改善アクションプランについては、ADAMSコンサルタントにお問い合わせください', footer_style))
-    story.append(Spacer(1, 5*mm))
-    story.append(Paragraph('© 2024 ADAMS Management Consulting Office. All Rights Reserved.', footer_style))
-    story.append(Paragraph('本診断ツールの無断転用・複製を禁じます', footer_style))
-    
-    # PDFビルド
-    doc.build(story)
+    c.save()
     buffer.seek(0)
     return buffer
 
+def get_rank(percentage):
+    """ランク判定"""
+    if percentage >= 85:
+        return "A", "優良レベル", "🏆", "#2ecc71"
+    elif percentage >= 70:
+        return "B", "標準レベル", "⭐", "#3498db"
+    elif percentage >= 55:
+        return "C", "要改善レベル", "⚠️", "#f39c12"
+    else:
+        return "D", "危機レベル", "🚨", "#e74c3c"
+
 def show_intro():
-    """イントロページ"""
-    # ロゴコンテナ（左寄せ） - 上部余白を完全排除
+    """イントロページ - 完全HTML Grid版"""
+    # ロゴ（完全に余白なし）
     st.markdown('<div class="logo-container">', unsafe_allow_html=True)
     try:
         st.image("https://raw.githubusercontent.com/KOKOS130/business-diagnostic-tool/main/adams_logo.png", width=140)
@@ -826,21 +493,21 @@ def show_intro():
     st.markdown('<div class="sub-header">✨ 所要時間: 約15分 | 全36問 | その場で結果がわかります ✨</div>', unsafe_allow_html=True)
     st.markdown('</div>', unsafe_allow_html=True)
     
-    st.markdown('<h2 style="text-align: center; margin-top: 2rem; margin-bottom: 1rem; color: #243666;">🎯 この診断について</h2>', unsafe_allow_html=True)
+    st.markdown('<h2 style="text-align: center; margin-top: 2rem; margin-bottom: 1.5rem; color: #243666;">🎯 この診断について</h2>', unsafe_allow_html=True)
     
-    # HTMLで直接2カラムレイアウトを実装（Streamlitのカラムを使わない）
-    st.markdown("""
+    # HTMLで直接2カラムレイアウトを実装
+    st.markdown(f"""
     <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; margin-top: 0;">
         <div>
             <div class="info-card">
-                <h3>📋 診断内容</h3>
+                <h3 style="margin-top: 0;">📋 診断内容</h3>
                 <p>事業推進力を<strong>6つの軸</strong>で診断します</p>
                 <p><strong>所要時間</strong>: 約15分<br>
                 <strong>設問数</strong>: 全36問<br>
                 <strong>結果</strong>: その場で確認可能</p>
             </div>
             <div class="info-card">
-                <h3>📊 わかること</h3>
+                <h3 style="margin-top: 0;">📊 わかること</h3>
                 <ul style="margin: 0; padding-left: 1.5rem;">
                     <li>総合スコアとランク評価</li>
                     <li>6軸のバランス（レーダーチャート）</li>
@@ -851,7 +518,7 @@ def show_intro():
         </div>
         <div>
             <div class="info-card">
-                <h3>🔍 6つの診断軸</h3>
+                <h3 style="margin-top: 0;">🔍 6つの診断軸</h3>
                 <p>🎯 <strong>経営ビジョンの明確さ</strong> (6問)<br>
                 📋 <strong>事業計画の実行管理</strong> (7問)<br>
                 👥 <strong>組織体制の強さ</strong> (6問)<br>
@@ -860,7 +527,7 @@ def show_intro():
                 💰 <strong>収益性の健全度</strong> (6問)</p>
             </div>
             <div class="info-card">
-                <h3>✅ 回答方法</h3>
+                <h3 style="margin-top: 0;">✅ 回答方法</h3>
                 <p>各設問に対して、現状を最も表している選択肢を選んでください</p>
                 <ul style="margin: 0; padding-left: 1.5rem;">
                     <li><strong>非常に当てはまる</strong></li>
@@ -872,32 +539,23 @@ def show_intro():
         </div>
     </div>
     """, unsafe_allow_html=True)
-
-    st.info("""
-    💡 **診断のポイント**  
-    ✓ 直感で正直に回答してください  
-    ✓ 理想ではなく、**現状**を評価してください  
-    ✓ 全ての設問に回答してください
-    """)
-
-    if st.button("📝 診断を開始する", type="primary", use_container_width=True):
+    
+    st.markdown("<br>", unsafe_allow_html=True)
+    
+    if st.button("🚀 診断を始める", type="primary", use_container_width=True):
         st.session_state.page = 'questions'
         st.rerun()
     
-    # ADAMSフッター
+    # 著作権表示
     st.markdown(f"""
-    <div class="adams-footer">
-        <strong>㈱ADAMS Management Consulting Office</strong><br>
-        本診断ツールは㈱ADAMSが提供するクライアント様向けサービスです
-    </div>
-    <div class="copyright-notice">
-        © 2024 ADAMS Management Consulting Office. All Rights Reserved.<br>
-        本診断ツールの無断転用・複製を禁じます
+    <div class="copyright">
+        © 株式会社ADAMS Management Consulting Office<br>
+        本診断ツールの無断転用を禁じます
     </div>
     """, unsafe_allow_html=True)
 
 def show_questions():
-    """質問ページ"""
+    """質問ページ - 既に修正済み（維持）"""
     # ロゴ（小サイズ、左寄せ）
     st.markdown('<div class="logo-container">', unsafe_allow_html=True)
     try:
@@ -976,23 +634,12 @@ def calculate_scores():
     
     total_score = sum(axis_scores.values())
     max_total_score = sum(axis_max_scores.values())
-    percentage = (total_score / max_total_score) * 100 if max_total_score > 0 else 0
+    percentage = (total_score / max_total_score * 100) if max_total_score > 0 else 0
     
     return axis_scores, axis_max_scores, total_score, max_total_score, percentage
 
-def get_rank(percentage):
-    """ランク判定"""
-    if percentage >= 85:
-        return "A", "優良レベル", "🌟", "#28a745"
-    elif percentage >= 70:
-        return "B", "標準レベル", "✅", "#17a2b8"
-    elif percentage >= 55:
-        return "C", "要改善レベル", "⚠️", "#ffc107"
-    else:
-        return "D", "危機レベル", "🚨", "#dc3545"
-
 def show_results():
-    """結果ページ"""
+    """結果ページ - 完全HTML Grid版（st.columns()完全排除）"""
     # ロゴ（小サイズ、左寄せ）
     st.markdown('<div class="logo-container">', unsafe_allow_html=True)
     try:
@@ -1010,7 +657,7 @@ def show_results():
     axis_scores, axis_max_scores, total_score, max_total_score, percentage = calculate_scores()
     rank, rank_label, rank_icon, rank_color = get_rank(percentage)
     
-    # 結果データの準備（スプレッドシート保存用）
+    # 結果データの準備
     result_data = {
         "診断日時": datetime.now().strftime('%Y年%m月%d日 %H:%M:%S'),
         "総合スコア": total_score,
@@ -1023,186 +670,198 @@ def show_results():
     # 結果を保存
     save_to_google_sheets(result_data)
     
-    # 総合スコア表示
-    st.write("### 🎯 総合評価")
+    # ===== 総合評価セクション（HTML Grid 3カラム）=====
+    st.markdown('<h3 style="margin-top: 1.5rem; margin-bottom: 1rem;">🎯 総合評価</h3>', unsafe_allow_html=True)
     
-    col1, col2, col3 = st.columns(3)
-    
-    with col1:
-        # ランクカード（グラデーション背景）
-        st.markdown(f"""
+    st.markdown(f"""
+    <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 1.5rem; margin-top: 0;">
+        <!-- カラム1: ランクカード -->
         <div style='text-align: center; padding: 2.5rem; background: linear-gradient(135deg, {rank_color} 0%, {rank_color}dd 100%); 
                     color: white; border-radius: 20px; box-shadow: 0 8px 16px rgba(0,0,0,0.15);'>
             <div style='font-size: 4rem; margin-bottom: 0.5rem;'>{rank_icon}</div>
             <div style='font-size: 2.5rem; font-weight: 800; margin-bottom: 0.5rem;'>ランク {rank}</div>
             <div style='font-size: 1.3rem; font-weight: 500;'>{rank_label}</div>
         </div>
-        """, unsafe_allow_html=True)
-    
-    with col2:
-        st.markdown('<div class="info-card">', unsafe_allow_html=True)
-        st.metric(label="総合スコア", value=f"{total_score} / {max_total_score} 点")
-        st.metric(label="達成率", value=f"{percentage:.1f}%")
-        st.markdown('</div>', unsafe_allow_html=True)
-    
-    with col3:
-        st.markdown('<div class="info-card">', unsafe_allow_html=True)
-        st.write("#### 📋 ランク基準")
-        st.write("""
-        - **A**: 85%以上（優良レベル）
-        - **B**: 70-84%（標準レベル）
-        - **C**: 55-69%（要改善レベル）
-        - **D**: 55%未満（危機レベル）
-        """)
-        st.markdown('</div>', unsafe_allow_html=True)
-    
-    st.write("")
-
-        # レーダーチャートと詳細スコア
-    st.write("### 📈 6軸バランス分析")
-    
-    col1, col2 = st.columns([2, 3])
-    
-    with col1:
-        st.markdown('<div class="info-card">', unsafe_allow_html=True)
-        # レーダーチャート（英語ラベル使用）
-        labels = list(axis_scores.keys())
-        scores = [axis_scores[label] / axis_max_scores[label] * 4 for label in labels]
         
-        angles = np.linspace(0, 2 * np.pi, len(labels), endpoint=False).tolist()
-        scores_plot = scores + scores[:1]
-        angles_plot = angles + angles[:1]
-        
-        fig, ax = plt.subplots(figsize=(5, 5), subplot_kw=dict(polar=True))
-        
-        # グラデーション効果
-        ax.plot(angles_plot, scores_plot, 'o-', linewidth=3, color=ADAMS_NAVY, markersize=10)
-        ax.fill(angles_plot, scores_plot, alpha=0.3, color=ADAMS_ACCENT)
-        
-        # 英語ラベルを使用（文字化け対策）
-        english_labels = [diagnostic_data[label]["english_label"] for label in labels]
-        
-        ax.set_thetagrids(np.degrees(angles), english_labels, fontsize=11, weight='bold')
-        ax.set_ylim(0, 4)
-        ax.set_yticks([1, 2, 3, 4])
-        ax.set_yticklabels(['1', '2', '3', '4'], fontsize=9)
-        ax.grid(True, linewidth=1, alpha=0.3, color=ADAMS_NAVY)
-        
-        # 背景色
-        ax.set_facecolor('#f8f9fa')
-        fig.patch.set_facecolor('white')
-        
-        st.pyplot(fig)
-        plt.close()
-        
-        # 凡例（日本語と英語の対応）
-        st.caption("""
-        **凡例**:  
-        Vision = 経営ビジョンの明確さ  
-        Planning = 事業計画の実行管理  
-        Organization = 組織体制の強さ  
-        Time Mgmt = 経営者の時間の使い方  
-        KPI = 数値管理の仕組み  
-        Profitability = 収益性の健全度
-        """)
-        st.markdown('</div>', unsafe_allow_html=True)
-    
-    with col2:
-        st.markdown('<div class="info-card">', unsafe_allow_html=True)
-        st.write("#### 📊 各軸スコア")
-        for idx, (axis_name, score) in enumerate(axis_scores.items(), 1):
-            icon = diagnostic_data[axis_name].get('icon', '📌')
-            max_score = axis_max_scores[axis_name]
-            pct = (score / max_score) * 100 if max_score > 0 else 0
-            
-            if pct >= 75:
-                color = "🟢"
-                badge_color = "#d4edda"
-            elif pct >= 50:
-                color = "🟡"
-                badge_color = "#fff3cd"
-            else:
-                color = "🔴"
-                badge_color = "#f8d7da"
-            
-            st.markdown(f"""
-            <div style='background: {badge_color}; padding: 0.8rem; border-radius: 10px; margin-bottom: 0.8rem;'>
-                <strong>{color} {icon} {axis_name}</strong><br>
-                <span style='font-size: 1.1rem;'>{score} / {max_score} 点 ({pct:.1f}%)</span>
+        <!-- カラム2: 総合スコア -->
+        <div class="info-card">
+            <div style="text-align: center;">
+                <div style="font-size: 0.9rem; color: #5a6c7d; margin-bottom: 0.5rem;">総合スコア</div>
+                <div style="font-size: 2rem; font-weight: 700; color: {ADAMS_NAVY}; margin-bottom: 1.5rem;">{total_score} / {max_total_score} 点</div>
             </div>
-            """, unsafe_allow_html=True)
-            st.progress(pct / 100)
-        st.markdown('</div>', unsafe_allow_html=True)
+            <div style="text-align: center;">
+                <div style="font-size: 0.9rem; color: #5a6c7d; margin-bottom: 0.5rem;">達成率</div>
+                <div style="font-size: 2rem; font-weight: 700; color: {ADAMS_NAVY};">{percentage:.1f}%</div>
+            </div>
+        </div>
+        
+        <!-- カラム3: ランク基準 -->
+        <div class="info-card">
+            <h4 style="margin: 0 0 1rem 0; color: {ADAMS_NAVY};">📋 ランク基準</h4>
+            <ul style="margin: 0; padding-left: 1.5rem; line-height: 1.8; font-size: 0.95rem;">
+                <li><strong>A</strong>: 85%以上（優良レベル）</li>
+                <li><strong>B</strong>: 70-84%（標準レベル）</li>
+                <li><strong>C</strong>: 55-69%（要改善レベル）</li>
+                <li><strong>D</strong>: 55%未満（危機レベル）</li>
+            </ul>
+        </div>
+    </div>
+    """, unsafe_allow_html=True)
     
-    st.write("")
+    # ===== 6軸バランス分析セクション（HTML Grid 2カラム + st.pyplot()）=====
+    st.markdown('<h3 style="margin-top: 2.5rem; margin-bottom: 1rem;">📈 6軸バランス分析</h3>', unsafe_allow_html=True)
     
-        # 優先改善課題
+    # レーダーチャート生成
+    labels = list(axis_scores.keys())
+    scores = [axis_scores[label] / axis_max_scores[label] * 4 for label in labels]
+    
+    angles = np.linspace(0, 2 * np.pi, len(labels), endpoint=False).tolist()
+    scores_plot = scores + scores[:1]
+    angles_plot = angles + angles[:1]
+    
+    fig, ax = plt.subplots(figsize=(6, 6), subplot_kw=dict(polar=True))
+    
+    # グラデーション効果
+    ax.plot(angles_plot, scores_plot, 'o-', linewidth=3, color=ADAMS_NAVY, markersize=10)
+    ax.fill(angles_plot, scores_plot, alpha=0.3, color=ADAMS_ACCENT)
+    
+    # 英語ラベルを使用（文字化け対策）
+    english_labels = [diagnostic_data[label]["english_label"] for label in labels]
+    
+    ax.set_thetagrids(np.degrees(angles), english_labels, fontsize=12, weight='bold')
+    ax.set_ylim(0, 4)
+    ax.set_yticks([1, 2, 3, 4])
+    ax.set_yticklabels(['1', '2', '3', '4'], fontsize=10)
+    ax.grid(True, linewidth=1, alpha=0.3, color=ADAMS_NAVY)
+    
+    # 背景色
+    ax.set_facecolor('#f8f9fa')
+    fig.patch.set_facecolor('white')
+    
+    # チャートをバッファに保存してbase64化
+    buf = BytesIO()
+    fig.savefig(buf, format='png', bbox_inches='tight', dpi=120, facecolor='white')
+    buf.seek(0)
+    img_base64 = base64.b64encode(buf.read()).decode()
+    plt.close()
+    
+    # 各軸スコアのHTML生成
+    axis_scores_html = ""
+    for idx, (axis_name, score) in enumerate(axis_scores.items(), 1):
+        icon = diagnostic_data[axis_name].get('icon', '📌')
+        max_score = axis_max_scores[axis_name]
+        pct = (score / max_score) * 100 if max_score > 0 else 0
+        
+        if pct >= 75:
+            color = "🟢"
+            badge_color = "#d4edda"
+            bar_color = "#28a745"
+        elif pct >= 50:
+            color = "🟡"
+            badge_color = "#fff3cd"
+            bar_color = "#ffc107"
+        else:
+            color = "🔴"
+            badge_color = "#f8d7da"
+            bar_color = "#dc3545"
+        
+        axis_scores_html += f"""
+        <div style='background: {badge_color}; padding: 1rem; border-radius: 10px; margin-bottom: 1rem;'>
+            <div style='margin-bottom: 0.5rem;'>
+                <strong>{color} {icon} {axis_name}</strong>
+            </div>
+            <div style='font-size: 1.1rem; margin-bottom: 0.5rem;'>
+                {score} / {max_score} 点 ({pct:.1f}%)
+            </div>
+            <div style='width: 100%; background: #e0e0e0; border-radius: 10px; height: 10px; overflow: hidden;'>
+                <div style='width: {pct}%; background: {bar_color}; height: 100%; border-radius: 10px; transition: width 0.3s ease;'></div>
+            </div>
+        </div>
+        """
+    
+    # HTML Grid 2カラムレイアウト
+    st.markdown(f"""
+    <div style="display: grid; grid-template-columns: 2fr 3fr; gap: 1.5rem; margin-top: 0;">
+        <!-- 左側: レーダーチャート -->
+        <div class="info-card">
+            <img src="data:image/png;base64,{img_base64}" style="width: 100%; height: auto; border-radius: 8px;">
+            <div style="margin-top: 1rem; padding: 0.8rem; background: #f8f9fa; border-radius: 8px; font-size: 0.85rem; line-height: 1.6;">
+                <strong>凡例</strong>:<br>
+                Vision = 経営ビジョンの明確さ<br>
+                Planning = 事業計画の実行管理<br>
+                Organization = 組織体制の強さ<br>
+                Time Mgmt = 経営者の時間の使い方<br>
+                KPI = 数値管理の仕組み<br>
+                Profitability = 収益性の健全度
+            </div>
+        </div>
+        
+        <!-- 右側: 各軸スコア -->
+        <div class="info-card">
+            <h4 style="margin: 0 0 1rem 0; color: {ADAMS_NAVY};">📊 各軸スコア</h4>
+            {axis_scores_html}
+        </div>
+    </div>
+    """, unsafe_allow_html=True)
+    
+    # ===== 優先改善課題 TOP3 =====
     st.write("### 🎯 優先改善課題 TOP3")
     
     sorted_axes = sorted(axis_scores.items(), key=lambda x: x[1] / axis_max_scores[x[0]] if axis_max_scores[x[0]] > 0 else 0)
     
     medals = ["🥇", "🥈", "🥉"]
-    priorities = ["最優先課題", "第2優先", "第3優先"]
-    
-    for idx, (axis_name, score) in enumerate(sorted_axes[:3]):
-        pct = (score / axis_max_scores[axis_name]) * 100 if axis_max_scores[axis_name] > 0 else 0
+    for i, (axis_name, score) in enumerate(sorted_axes[:3]):
+        max_score = axis_max_scores[axis_name]
+        pct = (score / max_score) * 100 if max_score > 0 else 0
         icon = diagnostic_data[axis_name].get('icon', '📌')
         
-        with st.expander(f"{medals[idx]} {priorities[idx]}: {icon} {axis_name} ({pct:.1f}%)", expanded=(idx==0)):
-            st.write(f"**現状スコア**: {score} / {axis_max_scores[axis_name]} 点")
-
-            st.write("**💡 改善すべきテーマ**")
-            
-            # 改善すべきテーマを取得して表示
-            themes = get_improvement_themes(axis_name, pct)
-            for theme in themes:
-                st.write(theme)
-
-    # ランク別のメッセージ
-    st.markdown('<div class="info-card">', unsafe_allow_html=True)
-    st.write("### 💡 総合診断")
+        # スコアに応じたテーマを選択
+        if pct >= 75:
+            level = "high"
+        elif pct >= 50:
+            level = "medium"
+        else:
+            level = "low"
+        
+        themes = diagnostic_data[axis_name]["improvement_themes"][level]
+        
+        st.markdown(f"""
+        <div class="info-card">
+            <h4 style="margin-top: 0;">{medals[i]} 第{i+1}位: {icon} {axis_name}</h4>
+            <p><strong>現在のスコア</strong>: {score}/{max_score} 点 ({pct:.1f}%)</p>
+            <p><strong>取り組むと良いテーマ（ヒント）</strong>:</p>
+            <ul style="margin: 0; padding-left: 1.5rem; line-height: 1.8;">
+                {''.join([f"<li>{theme}</li>" for theme in themes])}
+            </ul>
+        </div>
+        """, unsafe_allow_html=True)
     
-    if rank == "A":
-        st.success(f"""
-        {rank_icon} **おめでとうございます！優良レベルです**
-        
-        ✅ 経営の仕組みが確立されています  
-        ✅ 事業推進力は高い状態です  
-        """)
-    elif rank == "B":
-        st.info(f"""
-        {rank_icon} **標準レベルです**
-        
-        基本的な仕組みはありますが、改善の余地があります。
-        """)
-    elif rank == "C":
-        st.warning(f"""
-        {rank_icon} **要改善レベルです**
-        
-        事業推進に課題が多い状態です。
-        """)
+    # ===== 総合診断コメント =====
+    st.write("### 💬 総合診断コメント")
+    
+    if percentage >= 85:
+        comment = "🎉 **素晴らしい！** 事業推進力が非常に高い状態です。現状を維持しつつ、さらなる成長に向けた新たな挑戦を検討してください。"
+    elif percentage >= 70:
+        comment = "👍 **良好！** 事業推進の基盤がしっかりしています。弱点となっている軸を強化することで、さらなる飛躍が期待できます。"
+    elif percentage >= 55:
+        comment = "⚠️ **要改善！** 改善の余地が大きい状態です。優先改善課題TOP3から着手し、段階的に事業推進力を高めていきましょう。"
     else:
-        st.error(f"""
-        {rank_icon} **危機レベルです**
-        
-        事業推進の仕組みが十分に機能していません。
-        """)
-    st.markdown('</div>', unsafe_allow_html=True)
-
-    st.info("💬 詳しい改善アクションプランについては、ADAMSコンサルタントにお問い合わせください")
-
-    # 印刷・PDF出力ボタン（no-printクラスで印刷時非表示）
-    st.markdown('<div class="no-print">', unsafe_allow_html=True)
+        comment = "🚨 **要注意！** 早急な改善が必要です。まずは優先度の高い課題から集中的に取り組むことをお勧めします。"
+    
+    st.info(comment)
+    
+    # ===== アクションボタン =====
+    st.markdown('<div class="no-print" style="margin-top: 2rem;">', unsafe_allow_html=True)
     
     # PDFダウンロードボタン用のデータ準備
     pdf_buffer = generate_pdf_report(axis_scores, axis_max_scores, total_score, 
                                      max_total_score, percentage, rank, rank_label)
     
-    # ボタンをHTML Gridで配置（白いブロック対策）
+    # ボタンをHTML Gridで配置
     st.markdown('<div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-top: 0;">', unsafe_allow_html=True)
     
-    # 左側: 印刷ボタン（HTML Gridの1列目）
-    st.markdown('<div style="grid-column: 1;">', unsafe_allow_html=True)
+    # 左側: 印刷ボタン
+    st.markdown('<div>', unsafe_allow_html=True)
     if st.button("🖨️ 印刷する", use_container_width=True, key="print_btn"):
         st.markdown("""
         <script>
@@ -1213,8 +872,8 @@ def show_results():
         """, unsafe_allow_html=True)
     st.markdown('</div>', unsafe_allow_html=True)
     
-    # 右側: PDFダウンロードボタン（HTML Gridの2列目）
-    st.markdown('<div style="grid-column: 2;">', unsafe_allow_html=True)
+    # 右側: PDFダウンロードボタン
+    st.markdown('<div>', unsafe_allow_html=True)
     st.download_button(
         label="📄 PDFダウンロード",
         data=pdf_buffer,
@@ -1224,29 +883,26 @@ def show_results():
     )
     st.markdown('</div>', unsafe_allow_html=True)
     
-    st.markdown('</div>', unsafe_allow_html=True)
-
-    # 診断をやり直すボタン
-    if st.button("🔄 診断をやり直す", use_container_width=True):
+    st.markdown('</div>', unsafe_allow_html=True)  # ボタンGrid終了
+    st.markdown('</div>', unsafe_allow_html=True)  # no-print終了
+    
+    # もう一度診断するボタン
+    st.markdown('<div class="no-print" style="margin-top: 1rem;">', unsafe_allow_html=True)
+    if st.button("🔄 もう一度診断する", use_container_width=True):
         st.session_state.scores = {}
         st.session_state.page = 'intro'
         st.rerun()
     st.markdown('</div>', unsafe_allow_html=True)
     
-    # ADAMSフッター
+    # 著作権表示
     st.markdown(f"""
-    <div class="adams-footer">
-        <strong>㈱ADAMS Management Consulting Office</strong><br>
-        本診断結果は㈱ADAMSにて記録・管理されます<br>
-        診断日時: {datetime.now().strftime('%Y年%m月%d日 %H:%M')}
-    </div>
-    <div class="copyright-notice">
-        © 2024 ADAMS Management Consulting Office. All Rights Reserved.<br>
-        本診断ツールの無断転用・複製を禁じます
+    <div class="copyright">
+        © 株式会社ADAMS Management Consulting Office<br>
+        本診断結果の無断転用を禁じます
     </div>
     """, unsafe_allow_html=True)
 
-# ページルーティング
+# メイン処理
 if st.session_state.page == 'intro':
     show_intro()
 elif st.session_state.page == 'questions':
