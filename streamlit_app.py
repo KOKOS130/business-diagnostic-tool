@@ -796,8 +796,7 @@ def show_intro():
     st.markdown('<div class="sub-header">✨ 所要時間: 約15分 | 全36問 | その場で結果がわかります ✨</div>', unsafe_allow_html=True)
     st.markdown('</div>', unsafe_allow_html=True)
     
-    st.write("## 🎯 この診断について")
-    st.write("")
+    st.markdown('<h2 style="text-align: center; margin-top: 2rem; margin-bottom: 1rem; color: #243666;">🎯 この診断について</h2>', unsafe_allow_html=True)
     
     col1, col2 = st.columns(2)
     
