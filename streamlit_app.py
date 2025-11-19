@@ -168,10 +168,20 @@ st.markdown(f"""
     
     /* ラジオボタン */
     .stRadio > div {{
-        background: white;
-        padding: 1rem;
-        border-radius: 12px;
-        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+        background: transparent;
+        padding: 0;
+        margin-top: 0.5rem;
+    }}
+    
+    /* 質問カード内のラジオボタン */
+    .question-card .stRadio {{
+        margin-top: 0 !important;
+        padding-top: 0 !important;
+    }}
+    
+    .question-card .stRadio > div {{
+        padding: 0 !important;
+        margin: 0 !important;
     }}
     
     /* メトリックカード */
@@ -920,14 +930,15 @@ def show_questions():
         for q_idx, question in enumerate(axis_data['questions'], 1):
             key = f"{axis_name}_{q_idx}"
             
-            st.markdown(f'<div class="question-card">', unsafe_allow_html=True)
-            st.write(f"**問{q_idx}. {question}**")
+            # 質問カードの開始
+            st.markdown(f'<div class="question-card"><p style="margin: 0 0 0.5rem 0; font-weight: 600; font-size: 1.05rem; color: {ADAMS_NAVY};">問{q_idx}. {question}</p>', unsafe_allow_html=True)
             
             if key in st.session_state.scores:
                 default_value = st.session_state.scores[key]
             else:
                 default_value = 4
             
+            # ラジオボタン（カード内）
             score = st.radio(
                 f"回答を選択してください",
                 options=[4, 3, 2, 1],
@@ -939,8 +950,9 @@ def show_questions():
             )
             
             st.session_state.scores[key] = score
+            
+            # 質問カードの終了
             st.markdown('</div>', unsafe_allow_html=True)
-            st.write("")
         
         st.write("---")
     
