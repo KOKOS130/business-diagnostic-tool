@@ -796,9 +796,8 @@ def show_intro():
     st.markdown('<div class="sub-header">✨ 所要時間: 約15分 | 全36問 | その場で結果がわかります ✨</div>', unsafe_allow_html=True)
     st.markdown('</div>', unsafe_allow_html=True)
     
-    st.markdown('<div class="info-card center-content">', unsafe_allow_html=True)
     st.write("## 🎯 この診断について")
-    st.markdown('</div>', unsafe_allow_html=True)
+    st.write("")
     
     col1, col2 = st.columns(2)
     
@@ -1002,9 +1001,7 @@ def show_results():
     save_to_google_sheets(result_data)
     
     # 総合スコア表示
-    st.markdown('<div class="info-card">', unsafe_allow_html=True)
     st.write("### 🎯 総合評価")
-    st.markdown('</div>', unsafe_allow_html=True)
     
     col1, col2, col3 = st.columns(3)
     
@@ -1037,9 +1034,7 @@ def show_results():
     st.write("")
     
     # レーダーチャートと詳細スコア
-    st.markdown('<div class="info-card">', unsafe_allow_html=True)
     st.write("### 📈 6軸バランス分析")
-    st.markdown('</div>', unsafe_allow_html=True)
     
     col1, col2 = st.columns([2, 3])
     
@@ -1117,9 +1112,7 @@ def show_results():
     st.write("")
     
     # 優先改善課題
-    st.markdown('<div class="info-card">', unsafe_allow_html=True)
     st.write("### 🎯 優先改善課題 TOP3")
-    st.markdown('</div>', unsafe_allow_html=True)
     
     sorted_axes = sorted(axis_scores.items(), key=lambda x: x[1] / axis_max_scores[x[0]] if axis_max_scores[x[0]] > 0 else 0)
     
