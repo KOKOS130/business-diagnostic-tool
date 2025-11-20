@@ -625,7 +625,9 @@ def show_results():
     scores_plot = scores + scores[:1]
     angles_plot = angles + angles[:1]
     
-    fig, ax = plt.subplots(figsize=(8, 8), subplot_kw=dict(polar=True))
+    # 正円のレーダーチャートを生成
+    fig = plt.figure(figsize=(8, 8))
+    ax = fig.add_subplot(111, polar=True, aspect='equal')  # aspect='equal'で正円に
     
     ax.plot(angles_plot, scores_plot, 'o-', linewidth=3, color=ADAMS_NAVY, markersize=10)
     ax.fill(angles_plot, scores_plot, alpha=0.3, color=ADAMS_ACCENT)
@@ -640,10 +642,15 @@ def show_results():
     ax.set_facecolor('#f8f9fa')
     fig.patch.set_facecolor('white')
     
-    col1, col2 = st.columns([2, 3])
+    # アスペクト比を固定して正円を保つ
+    fig.tight_layout()
+    
+    # 正円表示のため、左側を少し広く
+    col1, col2 = st.columns([3, 4])
     
     with col1:
-        st.pyplot(fig)
+        # 正円を保つためuse_container_width=False
+        st.pyplot(fig, use_container_width=False)
         plt.close()
         
         st.info("""
