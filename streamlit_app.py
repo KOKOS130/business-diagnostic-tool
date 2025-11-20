@@ -6,7 +6,6 @@ from datetime import datetime
 import json
 import base64
 from io import BytesIO
-from pdf_report_generator import generate_pdf_report
 
 st.set_page_config(page_title="ADAMS 事業推進力診断ツール", layout="wide", initial_sidebar_state="collapsed")
 
@@ -699,42 +698,6 @@ def show_results():
     
     # ===== アクションボタン =====
     st.write("---")
-    
-    # PDFレポートダウンロードボタン
-    col1, col2 = st.columns(2)
-    
-    with col1:
-        # 企業名入力（オプション）
-        company_name = st.text_input("🏢 企業名（レポートに表示）", placeholder="例: 株式会社ABC", key="company_name")
-    
-    with col2:
-        st.write("")
-        st.write("")
-        # PDF生成ボタン
-        try:
-            pdf_buffer = generate_pdf_report(
-                axis_scores=axis_scores,
-                axis_max_scores=axis_max_scores,
-                total_score=total_score,
-                max_total_score=max_total_score,
-                percentage=percentage,
-                rank=rank,
-                rank_label=rank_label,
-                diagnostic_data=diagnostic_data,
-                company_name=company_name if company_name else ""
-            )
-            
-            st.download_button(
-                label="📄 診断レポートをダウンロード（PDF）",
-                data=pdf_buffer,
-                file_name=f"ADAMS_事業推進力診断レポート_{datetime.now().strftime('%Y%m%d')}.pdf",
-                mime="application/pdf",
-                use_container_width=True
-            )
-        except Exception as e:
-            st.error(f"PDF生成エラー: {str(e)}")
-    
-    st.write("")
     
     if st.button("🔄 もう一度診断する", use_container_width=True):
         st.session_state.scores = {}
