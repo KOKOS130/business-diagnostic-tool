@@ -388,19 +388,37 @@ def show_intro():
     
     st.markdown("## 🎯 この診断について")
     
+    # 2×2グリッドレイアウト
     col1, col2 = st.columns(2)
     
     with col1:
         st.markdown("""
-        <div class="info-card">
+        <div class="info-card" style="height: 200px;">
             <h3>📋 診断内容</h3>
             <p>事業推進力を<strong>6つの軸</strong>で診断します</p>
             <p><strong>所要時間</strong>: 約15分 | <strong>設問数</strong>: 全36問</p>
         </div>
         """, unsafe_allow_html=True)
-        
+    
+    with col2:
         st.markdown("""
-        <div class="info-card">
+        <div class="info-card" style="height: 200px;">
+            <h3>✅ 回答方法</h3>
+            <p>各設問に対して、現状を最も表している選択肢を選んでください</p>
+            <ul style="font-size: 0.9rem;">
+                <li>非常に当てはまる</li>
+                <li>やや当てはまる</li>
+                <li>あまり当てはまらない</li>
+                <li>全く当てはまらない</li>
+            </ul>
+        </div>
+        """, unsafe_allow_html=True)
+    
+    col3, col4 = st.columns(2)
+    
+    with col3:
+        st.markdown("""
+        <div class="info-card" style="height: 200px;">
             <h3>📊 わかること</h3>
             <ul>
                 <li>総合スコアとランク評価</li>
@@ -410,9 +428,9 @@ def show_intro():
         </div>
         """, unsafe_allow_html=True)
     
-    with col2:
+    with col4:
         st.markdown("""
-        <div class="info-card">
+        <div class="info-card" style="height: 200px;">
             <h3>🔍 6つの診断軸</h3>
             <p style="font-size: 0.9rem;">
             🎯 経営ビジョンの明確さ (6問)<br>
@@ -422,19 +440,6 @@ def show_intro():
             📊 数値管理の仕組み (6問)<br>
             💰 収益性の健全度 (6問)
             </p>
-        </div>
-        """, unsafe_allow_html=True)
-        
-        st.markdown("""
-        <div class="info-card">
-            <h3>✅ 回答方法</h3>
-            <p>各設問に対して、現状を最も表している選択肢を選んでください</p>
-            <ul style="font-size: 0.9rem;">
-                <li>非常に当てはまる</li>
-                <li>やや当てはまる</li>
-                <li>あまり当てはまらない</li>
-                <li>全く当てはまらない</li>
-            </ul>
         </div>
         """, unsafe_allow_html=True)
     
