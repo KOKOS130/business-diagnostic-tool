@@ -65,10 +65,32 @@ st.markdown(f"""
     .info-card {{
         background: white;
         border-radius: 12px;
-        padding: 1.5rem;
+        padding: 1.2rem;
         box-shadow: 0 2px 4px rgba(0, 0, 0, 0.06);
         margin-bottom: 1rem;
         border: 1px solid rgba(36, 54, 102, 0.08);
+        height: 100%;
+        display: flex;
+        flex-direction: column;
+    }}
+    
+    .info-card h3 {{
+        margin-top: 0;
+        margin-bottom: 0.8rem;
+        color: {ADAMS_NAVY};
+    }}
+    
+    .info-card p, .info-card ul {{
+        margin-top: 0;
+        margin-bottom: 0.5rem;
+    }}
+    
+    .info-card ul {{
+        padding-left: 1.2rem;
+    }}
+    
+    .info-card ul li {{
+        margin-bottom: 0.2rem;
     }}
     
     .info-card:hover {{
@@ -388,24 +410,24 @@ def show_intro():
     
     st.markdown("## 🎯 この診断について")
     
-    # 2×2グリッドレイアウト
+    # 2×2グリッドレイアウト（高さ自動調整）
     col1, col2 = st.columns(2)
     
     with col1:
         st.markdown("""
-        <div class="info-card" style="height: 200px;">
-            <h3>📋 診断内容</h3>
-            <p>事業推進力を<strong>6つの軸</strong>で診断します</p>
-            <p><strong>所要時間</strong>: 約15分 | <strong>設問数</strong>: 全36問</p>
+        <div class="info-card" style="min-height: 160px;">
+            <h3 style="font-size: 1.2rem; margin-bottom: 0.8rem;">📋 診断内容</h3>
+            <p style="font-size: 0.95rem; margin-bottom: 0.5rem;">事業推進力を<strong>6つの軸</strong>で診断します</p>
+            <p style="font-size: 0.9rem;"><strong>所要時間</strong>: 約15分 | <strong>設問数</strong>: 全36問</p>
         </div>
         """, unsafe_allow_html=True)
     
     with col2:
         st.markdown("""
-        <div class="info-card" style="height: 200px;">
-            <h3>✅ 回答方法</h3>
-            <p>各設問に対して、現状を最も表している選択肢を選んでください</p>
-            <ul style="font-size: 0.9rem;">
+        <div class="info-card" style="min-height: 160px;">
+            <h3 style="font-size: 1.2rem; margin-bottom: 0.8rem;">✅ 回答方法</h3>
+            <p style="font-size: 0.9rem; margin-bottom: 0.5rem;">各設問に対して、現状を最も表している選択肢を選んでください</p>
+            <ul style="font-size: 0.85rem; margin-top: 0.3rem; padding-left: 1.2rem;">
                 <li>非常に当てはまる</li>
                 <li>やや当てはまる</li>
                 <li>あまり当てはまらない</li>
@@ -418,9 +440,9 @@ def show_intro():
     
     with col3:
         st.markdown("""
-        <div class="info-card" style="height: 200px;">
-            <h3>📊 わかること</h3>
-            <ul>
+        <div class="info-card" style="min-height: 160px;">
+            <h3 style="font-size: 1.2rem; margin-bottom: 0.8rem;">📊 わかること</h3>
+            <ul style="font-size: 0.9rem; margin-top: 0.3rem; padding-left: 1.2rem;">
                 <li>総合スコアとランク評価</li>
                 <li>6軸のバランス（レーダーチャート）</li>
                 <li>具体的な改善ポイント</li>
@@ -430,9 +452,9 @@ def show_intro():
     
     with col4:
         st.markdown("""
-        <div class="info-card" style="height: 200px;">
-            <h3>🔍 6つの診断軸</h3>
-            <p style="font-size: 0.9rem;">
+        <div class="info-card" style="min-height: 160px;">
+            <h3 style="font-size: 1.2rem; margin-bottom: 0.8rem;">🔍 6つの診断軸</h3>
+            <p style="font-size: 0.85rem; line-height: 1.6; margin-top: 0.3rem;">
             🎯 経営ビジョンの明確さ (6問)<br>
             📋 事業計画の実行管理 (7問)<br>
             👥 組織体制の強さ (6問)<br>
