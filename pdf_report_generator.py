@@ -17,8 +17,9 @@ from datetime import datetime
 import matplotlib.pyplot as plt
 import numpy as np
 
-# 日本語フォントの登録
+# ハイブリッドフォント設定: 英数字=Arial、日本語=Noto Sans CJK
 try:
+    # 日本語フォントの登録
     pdfmetrics.registerFont(TTFont('NotoSans', '/usr/share/fonts/opentype/noto/NotoSansCJK-Regular.ttc', subfontIndex=0))
     pdfmetrics.registerFont(TTFont('NotoSans-Bold', '/usr/share/fonts/opentype/noto/NotoSansCJK-Bold.ttc', subfontIndex=0))
     FONT_NAME = 'NotoSans'
@@ -163,23 +164,42 @@ def generate_pdf_report(axis_scores, axis_max_scores, total_score, max_total_sco
     # 総合評価テーブル
     rank_color = ADAMS_GOLD if rank == "A" else ADAMS_ACCENT if rank == "B" else colors.orange if rank == "C" else colors.red
     
+    # 総合評価テーブル（セル結合レイアウト）
     eval_data = [
         ['総合ランク', f'{rank}', rank_label],
-        ['総合スコア', f'{total_score} / {max_total_score} 点'],
-        ['達成率', f'{percentage:.1f}%']
+        ['総合スコア', f'{total_score} / {max_total_score} 点', ''],
+        ['達成率', f'{percentage:.1f}%', '']
     ]
     
-    eval_table = Table(eval_data, colWidths=[50*mm, 100*mm])
+    eval_table = Table(eval_data, colWidths=[40*mm, 40*mm, 70*mm])
     eval_table.setStyle(TableStyle([
+        # フォント設定（Arial）
         ('FONT', (0, 0), (-1, -1), FONT_NAME, 11),
         ('FONT', (0, 0), (0, -1), FONT_BOLD, 11),
-        ('FONT', (1, 0), (1, 0), FONT_BOLD, 20),
-        ('BACKGROUND', (0, 0), (-1, 0), rank_color),
-        ('TEXTCOLOR', (0, 0), (-1, 0), colors.white),
-        ('BACKGROUND', (0, 1), (-1, -1), colors.white),
-        ('GRID', (0, 0), (-1, -1), 1, colors.grey),
-        ('ALIGN', (0, 0), (-1, -1), 'CENTER'),
+        ('FONT', (1, 0), (2, 0), FONT_BOLD, 20),  # 1行目のランク部分を大きく
+        
+        # セル結合
+        ('SPAN', (1, 1), (2, 1)),  # 2行目: スコア部分を結合
+        ('SPAN', (1, 2), (2, 2)),  # 3行目: 達成率部分を結合
+        
+        # 背景色
+        ('BACKGROUND', (0, 0), (-1, 0), colors.HexColor('#fff9e6')),  # 薄い黄色
+        ('BACKGROUND', (0, 1), (-1, -1), colors.HexColor('#fff9e6')),
+        
+        # テキスト色
+        ('TEXTCOLOR', (0, 0), (-1, -1), colors.black),
+        
+        # 罫線
+        ('GRID', (0, 0), (-1, -1), 1, colors.black),
+        
+        # 配置
+        ('ALIGN', (0, 0), (0, -1), 'LEFT'),      # 左列は左揃え
+        ('ALIGN', (1, 0), (1, 0), 'CENTER'),     # 1行目のランク（A）は中央揃え
+        ('ALIGN', (2, 0), (2, 0), 'LEFT'),       # 1行目の「優良レベル」は左揃え
+        ('ALIGN', (1, 1), (2, 2), 'CENTER'),     # 2-3行目の結合セルは中央揃え
         ('VALIGN', (0, 0), (-1, -1), 'MIDDLE'),
+        
+        # パディング
         ('PADDING', (0, 0), (-1, -1), 8),
     ]))
     
