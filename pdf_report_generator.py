@@ -165,11 +165,11 @@ def generate_pdf_report(axis_scores, axis_max_scores, total_score, max_total_sco
     
     eval_data = [
         ['総合ランク', f'{rank}', rank_label],
-        ['総合スコア', f'{total_score} / {max_total_score} 点', ''],
-        ['達成率', f'{percentage:.1f}%', '']
+        ['総合スコア', f'{total_score} / {max_total_score} 点'],
+        ['達成率', f'{percentage:.1f}%']
     ]
     
-    eval_table = Table(eval_data, colWidths=[50*mm, 50*mm, 50*mm])
+    eval_table = Table(eval_data, colWidths=[50*mm, 100*mm])
     eval_table.setStyle(TableStyle([
         ('FONT', (0, 0), (-1, -1), FONT_NAME, 11),
         ('FONT', (0, 0), (0, -1), FONT_BOLD, 11),
@@ -213,16 +213,16 @@ def generate_pdf_report(axis_scores, axis_max_scores, total_score, max_total_sco
     
     story.append(PageBreak())
     
-    # ===== 6軸バランス分析ページ =====
-    story.append(Paragraph("2. 6軸バランス分析", heading1_style))
-    story.append(Spacer(1, 5*mm))
+    # ===== 6軸バランス分析と各軸詳細スコア（1ページに統合） =====
+    story.append(Paragraph("2. 6軸バランス分析と詳細スコア", heading1_style))
+    story.append(Spacer(1, 3*mm))
     
     # レーダーチャートを生成
     labels = list(axis_scores.keys())
     scores = [axis_scores[label] / axis_max_scores[label] * 4 for label in labels]
     
     # Matplotlibでレーダーチャートを生成
-    fig, ax = plt.subplots(figsize=(6, 6), subplot_kw=dict(polar=True))
+    fig, ax = plt.subplots(figsize=(5, 5), subplot_kw=dict(polar=True))
     
     angles = np.linspace(0, 2 * np.pi, len(labels), endpoint=False).tolist()
     scores_plot = scores + scores[:1]
@@ -233,10 +233,10 @@ def generate_pdf_report(axis_scores, axis_max_scores, total_score, max_total_sco
     
     # 英語ラベルを使用
     english_labels = [diagnostic_data[label]["english_label"] for label in labels]
-    ax.set_thetagrids(np.degrees(angles), english_labels, fontsize=10, weight='bold')
+    ax.set_thetagrids(np.degrees(angles), english_labels, fontsize=9, weight='bold')
     ax.set_ylim(0, 4)
     ax.set_yticks([1, 2, 3, 4])
-    ax.set_yticklabels(['1', '2', '3', '4'], fontsize=9)
+    ax.set_yticklabels(['1', '2', '3', '4'], fontsize=8)
     ax.grid(True, linewidth=0.8, alpha=0.3)
     
     ax.set_facecolor('#f8f9fa')
@@ -248,27 +248,20 @@ def generate_pdf_report(axis_scores, axis_max_scores, total_score, max_total_sco
     img_buffer.seek(0)
     plt.close()
     
-    # PDFに画像を追加
-    radar_img = Image(img_buffer, width=120*mm, height=120*mm)
+    # PDFに画像を追加（小さめ）
+    radar_img = Image(img_buffer, width=80*mm, height=80*mm)
     story.append(radar_img)
-    story.append(Spacer(1, 5*mm))
+    story.append(Spacer(1, 3*mm))
     
-    # 凡例
+    # 凡例（簡潔化）
     legend_text = """
-    <b>【凡例】</b><br/>
-    Vision = 経営ビジョンの明確さ / Planning = 事業計画の実行管理<br/>
-    Organization = 組織体制の強さ / Time Mgmt = 経営者の時間の使い方<br/>
-    KPI = 数値管理の仕組み / Profitability = 収益性の健全度
+    <b>【凡例】</b> Vision=ビジョン / Planning=計画管理 / Organization=組織 / Time Mgmt=時間管理 / KPI=数値管理 / Profitability=収益性
     """
     story.append(Paragraph(legend_text, body_style))
-    
-    story.append(PageBreak())
-    
-    # ===== 各軸詳細スコアページ =====
-    story.append(Paragraph("3. 各軸詳細スコア", heading1_style))
     story.append(Spacer(1, 5*mm))
     
-    # 各軸のスコアテーブル
+    # 各軸のスコアテーブル（コンパクト化）
+    story.append(Paragraph("【各軸詳細スコア】", heading2_style))
     score_data = [['診断軸', 'スコア', '達成率', '評価']]
     
     for axis_name, score in axis_scores.items():
@@ -292,15 +285,15 @@ def generate_pdf_report(axis_scores, axis_max_scores, total_score, max_total_sco
     
     score_table = Table(score_data, colWidths=[60*mm, 35*mm, 30*mm, 25*mm])
     score_table.setStyle(TableStyle([
-        ('FONT', (0, 0), (-1, 0), FONT_BOLD, 11),
-        ('FONT', (0, 1), (-1, -1), FONT_NAME, 10),
+        ('FONT', (0, 0), (-1, 0), FONT_BOLD, 10),
+        ('FONT', (0, 1), (-1, -1), FONT_NAME, 9),
         ('BACKGROUND', (0, 0), (-1, 0), ADAMS_NAVY),
         ('TEXTCOLOR', (0, 0), (-1, 0), colors.white),
         ('BACKGROUND', (0, 1), (-1, -1), colors.white),
         ('GRID', (0, 0), (-1, -1), 1, colors.grey),
         ('ALIGN', (1, 0), (-1, -1), 'CENTER'),
         ('VALIGN', (0, 0), (-1, -1), 'MIDDLE'),
-        ('PADDING', (0, 0), (-1, -1), 6),
+        ('PADDING', (0, 0), (-1, -1), 5),
     ]))
     
     story.append(score_table)
@@ -308,7 +301,7 @@ def generate_pdf_report(axis_scores, axis_max_scores, total_score, max_total_sco
     story.append(PageBreak())
     
     # ===== 優先改善課題 TOP3ページ =====
-    story.append(Paragraph("4. 優先改善課題 TOP3", heading1_style))
+    story.append(Paragraph("3. 優先改善課題 TOP3", heading1_style))
     story.append(Spacer(1, 5*mm))
     
     sorted_axes = sorted(axis_scores.items(), 
@@ -345,7 +338,7 @@ def generate_pdf_report(axis_scores, axis_max_scores, total_score, max_total_sco
     story.append(PageBreak())
     
     # ===== まとめページ =====
-    story.append(Paragraph("5. まとめと次のステップ", heading1_style))
+    story.append(Paragraph("4. まとめと次のステップ", heading1_style))
     story.append(Spacer(1, 5*mm))
     
     summary_text = """
