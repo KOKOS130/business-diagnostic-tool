@@ -723,13 +723,48 @@ def show_results():
     
     st.info(comment)
     
-    # ===== アクションボタン =====
+    # ===== PDFレポート生成 =====
     st.write("---")
+    st.write("### 📄 診断レポート")
     
-    if st.button("🔄 もう一度診断する", use_container_width=True):
-        st.session_state.scores = {}
-        st.session_state.page = 'intro'
-        st.rerun()
+    col1, col2 = st.columns(2)
+    
+    with col1:
+        if st.button("📊 PDFレポートをダウンロード", use_container_width=True, type="primary"):
+            try:
+                # PDF生成モジュールをインポート
+                from pdf_report_generator import generate_pdf_report
+                
+                # PDFを生成
+                pdf_buffer = generate_pdf_report(
+                    axis_scores=axis_scores,
+                    axis_max_scores=axis_max_scores,
+                    total_score=total_score,
+                    max_total_score=max_total_score,
+                    percentage=percentage,
+                    rank=rank,
+                    rank_label=rank_label,
+                    diagnostic_data=diagnostic_data,
+                    company_name=""
+                )
+                
+                # ダウンロードボタンを表示
+                st.download_button(
+                    label="📥 PDFをダウンロード",
+                    data=pdf_buffer,
+                    file_name=f"ADAMS_事業推進力診断レポート_{datetime.now().strftime('%Y%m%d')}.pdf",
+                    mime="application/pdf",
+                    use_container_width=True
+                )
+                st.success("✅ PDFレポートを生成しました！")
+            except Exception as e:
+                st.error(f"❌ PDF生成エラー: {str(e)}")
+    
+    with col2:
+        if st.button("🔄 もう一度診断する", use_container_width=True):
+            st.session_state.scores = {}
+            st.session_state.page = 'intro'
+            st.rerun()
     
     st.markdown(f"""
     <div class="copyright">
