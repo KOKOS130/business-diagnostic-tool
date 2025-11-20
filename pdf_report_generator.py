@@ -241,8 +241,9 @@ def generate_pdf_report(axis_scores, axis_max_scores, total_score, max_total_sco
     labels = list(axis_scores.keys())
     scores = [axis_scores[label] / axis_max_scores[label] * 4 for label in labels]
     
-    # Matplotlibでレーダーチャートを生成
-    fig, ax = plt.subplots(figsize=(5, 5), subplot_kw=dict(polar=True))
+    # Matplotlibで正円のレーダーチャートを生成
+    fig = plt.figure(figsize=(5, 5))
+    ax = fig.add_subplot(111, polar=True, aspect='equal')  # aspect='equal'で正円に
     
     angles = np.linspace(0, 2 * np.pi, len(labels), endpoint=False).tolist()
     scores_plot = scores + scores[:1]
@@ -261,6 +262,9 @@ def generate_pdf_report(axis_scores, axis_max_scores, total_score, max_total_sco
     
     ax.set_facecolor('#f8f9fa')
     fig.patch.set_facecolor('white')
+    
+    # アスペクト比を固定して正円を保つ
+    fig.tight_layout()
     
     # 画像をバッファに保存
     img_buffer = BytesIO()
