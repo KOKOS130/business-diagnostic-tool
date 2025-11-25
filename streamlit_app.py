@@ -737,7 +737,7 @@ def show_results():
     col1, col2 = st.columns(2)
     
     with col1:
-        if st.button("📊 PDFレポートをダウンロード", use_container_width=True, type="primary"):
+        if st.button("📊 PDFレポートを生成", use_container_width=True, type="primary"):
             try:
                 # PDF生成モジュールをインポート
                 from pdf_report_generator import generate_pdf_report
